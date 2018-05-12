@@ -1,0 +1,15 @@
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\bin\Debug\IPL-IDE Advanced Editor.exe.config
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\bin\Debug\IPL-IDE Advanced Editor.exe
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\bin\Debug\IPL-IDE Advanced Editor.pdb
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.csprojResolveAssemblyReference.cache
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL_IDE_Advanced_Editor.Form1.resources
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL_IDE_Advanced_Editor.Properties.Resources.resources
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.csproj.GenerateResource.Cache
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.exe
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.pdb
+E:\escritorio\gtasa mod\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\bin\Debug\IPL-IDE Advanced Editor.exe.config
+E:\escritorio\gtasa mod\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.exe
+E:\escritorio\gtasa mod\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.pdb
+C:\Users\Admin\Desktop\pendrive\MyWorkStuff\C#\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\bin\Debug\IPL-IDE Advanced Editor.exe.config
+C:\Users\Admin\Desktop\pendrive\MyWorkStuff\C#\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.exe
+C:\Users\Admin\Desktop\pendrive\MyWorkStuff\C#\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.pdb

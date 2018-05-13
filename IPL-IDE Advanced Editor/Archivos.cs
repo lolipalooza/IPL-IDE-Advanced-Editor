@@ -10,114 +10,28 @@ namespace IPL_IDE_Advanced_Editor
 {
     class Archivos
     {
-        public static string ini = "settings.ini";
-
-        public static string ini_raw = "" +
-            "; IPL/IDE Advanced Editor" + "\r\n" +
-            "; Archivo de configuración" + "\r\n" +
-            "; En este archivo están almacenadas las entradas por defecto" + "\r\n" +
-            "; Aqui puedes agregar más entradas si lo deseas, pero cuidado de respetar las reglas de sintaxis" + "\r\n" +
-            "; o podrían ocurrir resultados inesperados. Si se desea restaurar settings.ini a su versión original" + "\r\n" +
-            "; entonces borrarlo y ejecutar nuevamente el IDE-IPL Advanced Editor.exe" + "\r\n" +
-            "[DefaultEntryPath]" + "\r\n" +
-            "C:" + "\r\n" +
-            "[DefaultEntry]" + "\r\n" +
-            "1" + "\r\n" +
-            "[Map1]" + "\r\n" +
-            "GTA: Liberty City Stories Map" + "\r\n" +
-            "[Ide1]" + "\r\n" +
-            "commer\\commer.ide" + "\r\n" +
-            "indust\\indust.ide" + "\r\n" +
-            "suburb\\suburb.ide" + "\r\n" +
-            "underg\\underg.ide" + "\r\n" +
-            "[Ipl1]" + "\r\n" +
-            "commer\\comNbtm.ipl" + "\r\n" +
-            "commer\\comNtop.ipl" + "\r\n" +
-            "commer\\comSE.ipl" + "\r\n" +
-            "commer\\comSW.ipl" + "\r\n" +
-            "indust\\industNE.ipl" + "\r\n" +
-            "indust\\industNW.ipl" + "\r\n" +
-            "indust\\industSE.ipl" + "\r\n" +
-            "indust\\industSW.ipl" + "\r\n" +
-            "indust\\props.ipl" + "\r\n" +
-            "suburb\\landne.ipl" + "\r\n" +
-            "suburb\\landsw.ipl" + "\r\n" +
-            "underg\\underg.ipl" + "\r\n" +
-            "underg\\overview.ipl" + "\r\n" +
-            "[Map2]" + "\r\n" +
-            "GTA: Vice City Stories Map" + "\r\n" +
-            "[Ide2]" + "\r\n" +
-            "files\\beach.ide" + "\r\n" +
-            "files\\mainla.ide" + "\r\n" +
-            "files\\mall.ide" + "\r\n" +
-            "[Ipl2]" + "\r\n" +
-            "files\\airport.ipl" + "\r\n" +
-            "files\\airportN.ipl" + "\r\n" +
-            "files\\bridge.ipl" + "\r\n" +
-            "files\\cisland.ipl" + "\r\n" +
-            "files\\docks.ipl" + "\r\n" +
-            "files\\downtown.ipl" + "\r\n" +
-            "files\\downtows.ipl" + "\r\n" +
-            "files\\golf.ipl" + "\r\n" +
-            "files\\haiti.ipl" + "\r\n" +
-            "files\\haitin.ipl" + "\r\n" +
-            "files\\islandsf.ipl" + "\r\n" +
-            "files\\littleha.ipl" + "\r\n" +
-            "files\\mall.ipl" + "\r\n" +
-            "files\\nbeach.ipl" + "\r\n" +
-            "files\\nbeachbt.ipl" + "\r\n" +
-            "files\\nbeachw.ipl" + "\r\n" +
-            "files\\oceandN.ipl" + "\r\n" +
-            "files\\oceandrv.ipl" + "\r\n" +
-            "files\\other-interiors.ipl" + "\r\n" +
-            "files\\starisl.ipl" + "\r\n" +
-            "files\\washintn.ipl" + "\r\n" +
-            "files\\washints.ipl" + "\r\n" +
-            "";
-
-        /*public static string[] ide = { "commer.ide", "indust.ide", "suburb.ide", "underg.ide" };
-        public static string[] ipl = { "comNbtm.ipl", "comNtop.ipl", "comSE.ipl", "comSW.ipl", 
-                                  "industNE.ipl", "industNW.ipl", "industSE.ipl", "industSW.ipl", 
-                                  "props.ipl", "landne.ipl", "landsw.ipl", 
-                                  "underg.ipl", "overview.ipl" };*/
-        /*public static string[] ide = { "beach.ide", "mainla.ide", "mall.ide" };
-        public static string[] ipl = { "airport.ipl", "airportN.ipl", "bridge.ipl", "cisland.ipl", 
-                                  "docks.ipl", "downtown.ipl", "downtows.ipl", "golf.ipl", 
-                                  "haiti.ipl", "haitin.ipl", "islandsf.ipl", 
-                                  "littleha.ipl", "mall.ipl" , "nbeach.ipl" , "nbeachbt.ipl" , "nbeachw.ipl",
-                                  "oceandN.ipl", "oceandrv.ipl" , "other-interiors.ipl", "starisl.ipl",
-                                  "washintn.ipl", "washints.ipl" };*/
-        //public static string[] ide = { "colmap.ide" }, ipl = { "colmap.ipl" };
         public static bool CheckFiles(string path)
         {
-            string[] ide = Settings.GetFromIni(Settings.Ide),
-                ipl = Settings.GetFromIni(Settings.Ipl);
-            for (int i = 0; i < ide.Length; i++)
+            foreach (string ide in Settings.GetFromIni(Settings.Ide))
             {
-                if (!File.Exists(Path.Combine(path, ide[i])))
+                if (!File.Exists(Path.Combine(path, ide)))
                     return false;
             }
-            for (int i = 0; i < ipl.Length; i++)
+            foreach (string ipl in Settings.GetFromIni(Settings.Ipl))
             {
-                if (!File.Exists(Path.Combine(path, ipl[i])))
+                if (!File.Exists(Path.Combine(path, ipl)))
                     return false;
             }
             return true;
         }
 
-        public static void CreateIni()
-        {
-            if (!File.Exists(ini))
-                Archivos.StoreRaw(ini, ini_raw);
-        }
-
         public static int getStartID(string ide_raw)
         {
-            string[] line = Regex.Split(ide_raw, "\r\n");
-            for (int i = 0; i < line.Length; i++ )
+            string[] lines = Regex.Split(ide_raw, "\r\n");
+            foreach (string line in lines)
             {
-                string[] dummy = line[i].Split(',');
-                if (!line[i].StartsWith("#") && (dummy.Length >= 5))
+                string[] dummy = line.Split(',');
+                if (!line.StartsWith("#") && (dummy.Length >= 5))
                     return Int32.Parse(dummy[0]);
             }
             return -1;
@@ -126,19 +40,19 @@ namespace IPL_IDE_Advanced_Editor
         public static int getFinalID(string ide_raw)
         {
             int stat = 0, Id = 0;
-            string[] line = Regex.Split(ide_raw, "\r\n");
-            for (int i = 0; i < line.Length; i++)
+            string[] lines = Regex.Split(ide_raw, "\r\n");
+            foreach (string line in lines)
             {
                 switch (stat)
                 {
                     case 0:
-                        if (line[i].Equals("objs")) stat = 1;
+                        if (line.Equals("objs")) stat = 1;
                         break;
                     case 1:
-                        if (line[i].Equals("end")) stat = 2;
+                        if (line.Equals("end")) stat = 2;
                         else
                         {
-                            string[] dummy = line[i].Split(',');
+                            string[] dummy = line.Split(',');
                             Id = Int32.Parse(dummy[0]);
                         }
                         break;
@@ -162,7 +76,7 @@ namespace IPL_IDE_Advanced_Editor
             }
             return raw;
         }
-        static public string GetRaw2(string fullpath)
+        static public string GetRaw(string fullpath)
         {
             string raw;
             using (FileStream fs = new FileStream(fullpath, FileMode.Open, FileAccess.Read))
@@ -189,14 +103,9 @@ namespace IPL_IDE_Advanced_Editor
             string[] path = file.Split('\\');   //Regex.Split(file, "\\");
             if (path.Length > 1)
             {
-                string combined_path = "";
-                for (int i = 0; i < (path.Length - 1); i++)
-                {
-                    if (i != 0) combined_path += "\\";
-                    combined_path += path[i];
-                }
-                if (!Directory.Exists(combined_path))
-                    Directory.CreateDirectory(combined_path);
+                path[path.Length - 1] = "";
+                if (!Directory.Exists(Path.Combine(path)))
+                    Directory.CreateDirectory(Path.Combine(path));
             }
         }
         /*static public void LOD_names(string path)

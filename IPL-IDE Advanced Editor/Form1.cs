@@ -22,9 +22,15 @@ namespace IPL_IDE_Advanced_Editor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Archivos.CreateIni();
+            this.Text = "IDE/IPL Advanced Editor v1.0.0";
+
+            if (!File.Exists(Settings.ini))
+                Archivos.StoreRaw(Settings.ini, Settings.default_raw);
+
             Settings.Entry = Int32.Parse(Settings.GetFromIni("DefaultEntry")[0]);
             Settings.UpdateSettings();
+
+            // Filling Combo box with Maps loaded from settings.ini
             int i = 1;
             string[] loadedMap = Settings.GetFromIni("Map" + i.ToString());
             while (loadedMap.Length != 0)
@@ -34,7 +40,11 @@ namespace IPL_IDE_Advanced_Editor
                 loadedMap = Settings.GetFromIni("Map" + i.ToString());
             }
             comboBoxLoadedMap.SelectedIndex = Settings.Entry - 1;
+
+            // Input path
             pathTextBox.Text = Settings.GetFromIni("DefaultEntryPath")[0];
+
+            decimal d = Decimal.Parse("1e-4", NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -43,12 +53,12 @@ namespace IPL_IDE_Advanced_Editor
             {
                 SetFormElements(false);
                 editProgressBar.Value = 0;
-                labelProgressStatus.Text = "0 %\nIniciando.";
+                labelProgressStatus.Text = "0 %\nStarting.";
                 bgWorker.RunWorkerAsync();
             }
             else
             {
-                MessageBox.Show("Falta uno o más archivos. No es posible realizar la conversión.", "Error!");
+                MessageBox.Show("One of more files are missing. Unable to make conversion.", "Error!");
             }
         }
         private void browseButton_Click(object sender, EventArgs e)
@@ -57,12 +67,12 @@ namespace IPL_IDE_Advanced_Editor
             {
                 while (Settings.StoreInIni("DefaultEntryPath", new string[1] { folderBrowserDialog1.SelectedPath }) == false)
                 {
-                    File.Delete(Archivos.ini);
-                    Archivos.CreateIni();
+                    File.Delete(Settings.ini);
+                    Archivos.StoreRaw(Settings.ini, Settings.default_raw);
                     MessageBox.Show(
                         "Un error ha ocurrido mientras se trataba de almacenar datos de configuración. " +
                         "El archivo \"settings.ini\" ha sido reconstruido y pudiera haberse producido pérdida de información.",
-                        "Error con settings.ini");
+                        "settings.ini error");
                 }
                 pathTextBox.Text = folderBrowserDialog1.SelectedPath;
             }
@@ -84,7 +94,7 @@ namespace IPL_IDE_Advanced_Editor
             for (int i = 0; i < ide_raw.Length; i++)
                 ide_raw[i] = Archivos.FixIde(ide_raw[i]);
 
-            // Editando las Ids de los objetos (tanto en los IDEs como en los IPLs)
+            // Batch Id re-conversion in IDE / IPL files
             for (int i = 0; i < ide_raw.Length; i++)
             {
                 string[] line = Regex.Split(ide_raw[i], "\r\n");    // ide_raw[i].Split(new [] { '\r', '\n' });
@@ -111,7 +121,9 @@ namespace IPL_IDE_Advanced_Editor
                                 }
                                 catch
                                 {
-                                    throw new Exception("Error: dummy[0] no se puede convertir a int32 porque vale: " + dummy[0]);
+                                    throw new Exception(
+                                        String.Format("Error: invalid Id value: '{0}' on file '{1}', line {2}",
+                                        dummy[0], ide[i], j + 1));
                                 }
                                 oldExpr = dummy[0] + "," + dummy[1];
                                 line[j] = (Id + offset - startID).ToString() + line[j].Substring(line[j].IndexOf(','));
@@ -122,7 +134,7 @@ namespace IPL_IDE_Advanced_Editor
                                 progress++;
                                 percentageComplete = (int)(100 * (float)progress / (float)(offset + interval));
                                 percentageComplete = (percentageComplete > 100) ? 100 : percentageComplete;
-                                bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nProcesando: " + ide[i]);
+                                bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nProcessing: " + ide[i]);
                             }
                             break;
                     }
@@ -140,6 +152,7 @@ namespace IPL_IDE_Advanced_Editor
             {
                 for (int i = 0; i < ipl_raw.Length; i++)
                 {
+                    Log.ReportFile(ipl[i]);
                     string[] line = Regex.Split(ipl_raw[i], "\r\n");
                     int stat = 0;
                     for (int j = 0; j < line.Length; j++)
@@ -154,33 +167,37 @@ namespace IPL_IDE_Advanced_Editor
                                 else
                                 {
                                     string[] dummy = line[j].Split(',');
+                                    Log.InitCoordinates();
+                                    Log.LogCoordinates(dummy[3], dummy[4], dummy[5]);
                                     if (dummy.Length > 1)
                                     {
-                                        double posx, posy, posz;
-                                        posx = double.Parse(dummy[3], CultureInfo.InvariantCulture.NumberFormat);
-                                        posy = double.Parse(dummy[4], CultureInfo.InvariantCulture.NumberFormat);
-                                        posz = double.Parse(dummy[5], CultureInfo.InvariantCulture.NumberFormat);
-                                        posx += double.Parse(xTxt, CultureInfo.InvariantCulture.NumberFormat);
-                                        posy += double.Parse(yTxt, CultureInfo.InvariantCulture.NumberFormat);
-                                        posz += double.Parse(zTxt, CultureInfo.InvariantCulture.NumberFormat);
+                                        decimal posx, posy, posz;
+                                        posx = Decimal.Parse(dummy[3], NumberStyles.Any, CultureInfo.InvariantCulture);
+                                        posy = Decimal.Parse(dummy[4], NumberStyles.Any, CultureInfo.InvariantCulture);
+                                        posz = Decimal.Parse(dummy[5], NumberStyles.Any, CultureInfo.InvariantCulture);
+                                        posx += Decimal.Parse(xTxt, NumberStyles.Any, CultureInfo.InvariantCulture);
+                                        posy += Decimal.Parse(yTxt, NumberStyles.Any, CultureInfo.InvariantCulture);
+                                        posz += Decimal.Parse(zTxt, NumberStyles.Any, CultureInfo.InvariantCulture);
                                         dummy[3] = " " + posx.ToString().Replace(",",".");
                                         dummy[4] = " " + posy.ToString().Replace(",", ".");
                                         dummy[5] = " " + posz.ToString().Replace(",", ".");
                                         line[j] = String.Join(",", dummy);
                                     }
+                                    Log.LogCoordinates(dummy[3], dummy[4], dummy[5]);
+                                    Log.WriteCoordErrorLine(dummy[0] + ", " + dummy[1], xTxt, yTxt, zTxt);
                                 }
                                 break;
                         }
                     }
                     percentageComplete = (int)(100 * (float)progress / (float)(offset + interval));
-                    bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nEditando coordenadas de: " + ipl[i]);
+                    bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nEditing coordinates of: " + ipl[i]);
                     ipl_raw[i] = String.Join("\r\n", line);
                 }
+                Log.EndLogging("coordinate_change.log");
             }
 
-            // Construyendo los nuevos archivos IDE / IPL
-            percentageComplete = (int)(100 * (float)progress / (float)(offset + interval));
-            bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nGuardando.");
+            // Building new IDE / IPL files
+            bgWorker.ReportProgress(100, "100 %\nStoring.");
             for (int i = 0; i < ide_raw.Length; i++)
             {
                 Archivos.CreateDirectoryOf(Path.Combine("output", ide[i]));
@@ -196,7 +213,7 @@ namespace IPL_IDE_Advanced_Editor
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             SetFormElements(true);
-            MessageBox.Show("Proceso finalizado con éxito!", "Edición de IDEs/IPLs");
+            MessageBox.Show("Editing process completed successfully!", "IDE/IPL editing");
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)

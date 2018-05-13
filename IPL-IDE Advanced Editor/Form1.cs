@@ -22,10 +22,10 @@ namespace IPL_IDE_Advanced_Editor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = "IDE/IPL Advanced Editor v1.0.0";
+            this.Text = Editor.fullname;
 
             if (!File.Exists(Settings.ini))
-                Archivos.StoreRaw(Settings.ini, Settings.default_raw);
+                Editor.StoreRaw(Settings.ini, Settings.default_raw);
 
             Settings.Entry = Int32.Parse(Settings.GetFromIni("DefaultEntry")[0]);
             Settings.UpdateSettings();
@@ -43,23 +43,19 @@ namespace IPL_IDE_Advanced_Editor
 
             // Input path
             pathTextBox.Text = Settings.GetFromIni("DefaultEntryPath")[0];
-
-            decimal d = Decimal.Parse("1e-4", NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            if (Archivos.CheckFiles(pathTextBox.Text))
+            if (Editor.CheckFiles(pathTextBox.Text))
             {
-                SetFormElements(false);
+                EnableForm(false);
                 editProgressBar.Value = 0;
                 labelProgressStatus.Text = "0 %\nStarting.";
                 bgWorker.RunWorkerAsync();
             }
             else
-            {
                 MessageBox.Show("One of more files are missing. Unable to make conversion.", "Error!");
-            }
         }
         private void browseButton_Click(object sender, EventArgs e)
         {
@@ -68,7 +64,7 @@ namespace IPL_IDE_Advanced_Editor
                 while (Settings.StoreInIni("DefaultEntryPath", new string[1] { folderBrowserDialog1.SelectedPath }) == false)
                 {
                     File.Delete(Settings.ini);
-                    Archivos.StoreRaw(Settings.ini, Settings.default_raw);
+                    Editor.StoreRaw(Settings.ini, Settings.default_raw);
                     MessageBox.Show(
                         "Un error ha ocurrido mientras se trataba de almacenar datos de configuración. " +
                         "El archivo \"settings.ini\" ha sido reconstruido y pudiera haberse producido pérdida de información.",
@@ -82,17 +78,22 @@ namespace IPL_IDE_Advanced_Editor
         {
             string[] ide = Settings.GetFromIni(Settings.Ide),
                 ipl = Settings.GetFromIni(Settings.Ipl);
-            string[] ipl_raw = Archivos.GetRaw(pathTextBox.Text, ipl),
-                ide_raw = Archivos.GetRaw(pathTextBox.Text, ide);
-            int startID = Archivos.getStartID(ide_raw[0]),
-                finalID = Archivos.getFinalID(ide_raw[ide_raw.Length - 1]),
+            string[] ipl_raw = Editor.GetRaw(pathTextBox.Text, ipl),
+                ide_raw = Editor.GetRaw(pathTextBox.Text, ide);
+            int startID = Editor.getStartID(ide_raw[0]),
+                finalID = Editor.getFinalID(ide_raw[ide_raw.Length - 1]),
                 interval = finalID - startID,
                 offset = Int32.Parse(IDoffsetTextBox.Text),
                 progress = startID,//labelProgressStatus,
                 percentageComplete = 0;
 
-            for (int i = 0; i < ide_raw.Length; i++)
-                ide_raw[i] = Archivos.FixIde(ide_raw[i]);
+            // Editor.FixIde will reconvert ide lines that previously had this structure:
+            // ID, ModelName, TextureName, DrawDist, Flags
+            // to this new structure:
+            // ID, ModelName, TextureName, ObjectCount, DrawDist, Flags
+            // Inserting always "1" in ObjectCount
+            /*for (int i = 0; i < ide_raw.Length; i++)
+                ide_raw[i] = Editor.FixIde(ide_raw[i]);*/
 
             // Batch Id re-conversion in IDE / IPL files
             for (int i = 0; i < ide_raw.Length; i++)
@@ -200,19 +201,19 @@ namespace IPL_IDE_Advanced_Editor
             bgWorker.ReportProgress(100, "100 %\nStoring.");
             for (int i = 0; i < ide_raw.Length; i++)
             {
-                Archivos.CreateDirectoryOf(Path.Combine("output", ide[i]));
-                Archivos.StoreRaw(Path.Combine("output", ide[i]), ide_raw[i]);
+                Editor.CreateDirectoryOf(Path.Combine("output", ide[i]));
+                Editor.StoreRaw(Path.Combine("output", ide[i]), ide_raw[i]);
             }
             for (int i = 0; i < ipl_raw.Length; i++)
             {
-                Archivos.CreateDirectoryOf(Path.Combine("output", ipl[i]));
-                Archivos.StoreRaw(Path.Combine("output", ipl[i]), ipl_raw[i]);
+                Editor.CreateDirectoryOf(Path.Combine("output", ipl[i]));
+                Editor.StoreRaw(Path.Combine("output", ipl[i]), ipl_raw[i]);
             }
         }
 
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            SetFormElements(true);
+            EnableForm(true);
             MessageBox.Show("Editing process completed successfully!", "IDE/IPL editing");
         }
 
@@ -227,7 +228,7 @@ namespace IPL_IDE_Advanced_Editor
             Settings.UpdateSettings();
             Settings.StoreInIni("DefaultEntry", new string[1] { (comboBoxLoadedMap.SelectedIndex + 1).ToString() });
         }
-        private void SetFormElements(bool flag)
+        private void EnableForm(bool flag)
         {
             editProgressBar.Visible = !flag;
             labelProgressStatus.Visible = !flag;

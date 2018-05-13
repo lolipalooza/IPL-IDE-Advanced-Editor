@@ -76,7 +76,7 @@ namespace IPL_IDE_Advanced_Editor
         public static void EndLogging(string logfile)
         {
             if (Log.Raw != String.Empty)
-                Archivos.StoreRaw("coordinate_change.log", Log.Raw);
+                Editor.StoreRaw("coordinate_change.log", Log.Raw);
         }
     }
 }

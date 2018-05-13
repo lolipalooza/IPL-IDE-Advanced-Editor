@@ -8,8 +8,14 @@ using System.Threading.Tasks;
 
 namespace IPL_IDE_Advanced_Editor
 {
-    class Archivos
+    class Editor
     {
+        public static byte version = 1, revision = 0, patch = 0;
+
+        public static string fullname = String.Format(
+            "IDE/IPL Advanced Editor v{0}.{1}.{2}",
+            Editor.version, Editor.revision, Editor.patch);
+
         public static bool CheckFiles(string path)
         {
             foreach (string ide in Settings.GetFromIni(Settings.Ide))
@@ -27,8 +33,7 @@ namespace IPL_IDE_Advanced_Editor
 
         public static int getStartID(string ide_raw)
         {
-            string[] lines = Regex.Split(ide_raw, "\r\n");
-            foreach (string line in lines)
+            foreach (string line in Regex.Split(ide_raw, "\r\n"))
             {
                 string[] dummy = line.Split(',');
                 if (!line.StartsWith("#") && (dummy.Length >= 5))
@@ -40,8 +45,7 @@ namespace IPL_IDE_Advanced_Editor
         public static int getFinalID(string ide_raw)
         {
             int stat = 0, Id = 0;
-            string[] lines = Regex.Split(ide_raw, "\r\n");
-            foreach (string line in lines)
+            foreach (string line in Regex.Split(ide_raw, "\r\n"))
             {
                 switch (stat)
                 {

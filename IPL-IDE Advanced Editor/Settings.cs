@@ -84,7 +84,7 @@ namespace IPL_IDE_Advanced_Editor
         }
         static public string[] GetFromIni(string entry)
         {
-            string raw = Editor.GetRaw(Settings.ini);
+            string raw = Archivos.GetRaw(Settings.ini);
             string[] lines = Regex.Split(raw, "\r\n");
             int stat = 0;
             List<string> result = new List<string>();
@@ -112,7 +112,7 @@ namespace IPL_IDE_Advanced_Editor
         }
         static public bool StoreInIni(string entry, string[] data)
         {
-            string raw = Editor.GetRaw(Settings.ini);
+            string raw = Archivos.GetRaw(Settings.ini);
             string[] line = Regex.Split(raw, "\r\n");
             List<string> list = new List<string>();
             int stat = 0;
@@ -149,7 +149,7 @@ namespace IPL_IDE_Advanced_Editor
             else
             {
                 raw = string.Join("\r\n", list);
-                Editor.StoreRaw(Settings.ini, raw);
+                Archivos.StoreRaw(Settings.ini, raw);
                 return true;
             }
         }

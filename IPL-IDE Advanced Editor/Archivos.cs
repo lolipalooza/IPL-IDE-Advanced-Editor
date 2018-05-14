@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,15 @@ using System.Threading.Tasks;
 
 namespace IPL_IDE_Advanced_Editor
 {
-    class Editor
+    class Archivos
     {
-        public static byte version = 1, revision = 0, patch = 0;
+        private static byte version = 1, revision = 0, patch = 0;
 
         public static string fullname = String.Format(
             "IDE/IPL Advanced Editor v{0}.{1}.{2}",
-            Editor.version, Editor.revision, Editor.patch);
+            Archivos.version, Archivos.revision, Archivos.patch);
+
+        public static Dictionary<string, List<string>> Ids;
 
         public static bool CheckFiles(string path)
         {
@@ -30,8 +33,35 @@ namespace IPL_IDE_Advanced_Editor
             }
             return true;
         }
-
-        public static int getStartID(string ide_raw)
+        public static Dictionary<string, List<string>> GetAllIds(string[] ide, string[] ide_raw)
+        {
+            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+            foreach (string file in ide)
+                dict[file] = new List<string>();
+            for (int i = 0; i < ide.Length; i++)
+            {
+                int stat = 0;
+                foreach (string line in Regex.Split(ide_raw[i], "\r\n"))
+                {
+                    switch (stat)
+                    {
+                        case 0:
+                            if (line.Equals("objs") || line.Equals("tobj")) stat = 1;
+                            break;
+                        case 1:
+                            if (line.Equals("end")) stat = 0;
+                            else
+                            {
+                                string[] dummy = line.Split(',');
+                                dict[ide[i]].Add(dummy[0]);
+                            }
+                            break;
+                    }
+                }
+            }
+            return dict;
+        }
+        public static int GetStartID(string ide_raw)
         {
             foreach (string line in Regex.Split(ide_raw, "\r\n"))
             {
@@ -42,7 +72,7 @@ namespace IPL_IDE_Advanced_Editor
             return -1;
         }
 
-        public static int getFinalID(string ide_raw)
+        public static int GetFinalID(string ide_raw)
         {
             int stat = 0, Id = 0;
             foreach (string line in Regex.Split(ide_raw, "\r\n"))
@@ -65,6 +95,25 @@ namespace IPL_IDE_Advanced_Editor
             return Id;
         }
         //public static int GetTotal()
+
+        public static int GetStartID(Dictionary<string, List<string>> ids)
+        {
+            int firstId = Int32.MaxValue;
+            foreach (KeyValuePair<string, List<string>> elem in ids)
+                foreach (string id in elem.Value)
+                    firstId = (Convert.ToInt32(id) < firstId) ? Convert.ToInt32(id) : firstId;
+            return firstId;
+        }
+
+        public static int GetFinalID(Dictionary<string, List<string>> ids)
+        {
+            int finalId = 0;
+            foreach (KeyValuePair<string, List<string>> elem in ids)
+                foreach (string id in elem.Value)
+                    finalId = (Convert.ToInt32(id) > finalId) ? Convert.ToInt32(id) : finalId;
+            return finalId;
+        }
+
         static public string[] GetRaw(string path, string[] source)
         {
             string[] raw = new string[source.Length];
@@ -243,6 +292,123 @@ namespace IPL_IDE_Advanced_Editor
             }
             ide_raw = String.Join("\r\n", line);
             return ide_raw;
+        }
+
+        public static string[] PatchAllIpl(string[] ipl, string[] ipl_raw, BackgroundWorker bgWorker, int total)
+        {
+            for (int i = 0; i < ipl_raw.Length; i++)
+            {
+                string[] line = Regex.Split(ipl_raw[i], "\r\n");
+                int stat = 0;
+                for (int j = 0; j < line.Length; j++)
+                {
+                    switch (stat)
+                    {
+                        case 0:
+                            if (line[j].Equals("inst")) stat = 1;
+                            break;
+                        case 1:
+                            if (line[j].Equals("end")) stat = 2;
+                            else
+                            {
+                                string[] dummy = Regex.Split(line[j], ", ");
+
+                                string id = "", modelName = "", interior = "",
+                                    posX = "", posY = "", posZ = "",
+                                    scaleX = "", scaleY = "", scaleZ = "",
+                                    rotX = "", rotY = "", rotZ = "", rotW = "", lod = "";
+
+                                // Input format
+                                if (dummy.Length == 12) // GTA III format Ipl
+                                {
+                                    id = dummy[0]; modelName = dummy[1]; posX = dummy[2];
+                                    posY = dummy[3]; posZ = dummy[4]; scaleX = dummy[5];
+                                    scaleY = dummy[6]; scaleZ = dummy[7]; rotX = dummy[8];
+                                    rotY = dummy[9]; rotZ = dummy[10]; rotW = dummy[11];
+
+                                    interior = "0";
+                                }
+                                else if (dummy.Length == 13) // GTA VC format Ipl
+                                {
+                                    id = dummy[0]; modelName = dummy[1]; interior = dummy[2];
+                                    posX = dummy[3]; posY = dummy[4]; posZ = dummy[5]; scaleX = dummy[6];
+                                    scaleY = dummy[7]; scaleZ = dummy[8]; rotX = dummy[9];
+                                    rotY = dummy[10]; rotZ = dummy[11]; rotW = dummy[12];
+                                }
+                                else if (dummy.Length == 11) // GTA SA format Ipl
+                                {
+                                    id = dummy[0]; modelName = dummy[1]; interior = dummy[2];
+                                    posX = dummy[3]; posY = dummy[4]; posZ = dummy[5]; rotX = dummy[6];
+                                    rotY = dummy[7]; rotZ = dummy[8]; rotW = dummy[9]; lod = dummy[10];
+
+                                    scaleX = "1"; scaleY = "1"; scaleZ = "1";
+                                }
+
+                                // Output format - TODO
+                                if (false) // GTA III format
+                                {
+                                    line[j] = String.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}",
+                                        id, modelName, posX, posY, posZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ, rotW);
+                                }
+                                else if (false) // Vice City format
+                                {
+                                    line[j] = String.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}",
+                                        id, modelName, interior, posX, posY, posZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ, rotW);
+                                }
+                                else if (true) // San Andreas format
+                                {
+                                    lod = Archivos.GetLodInt(modelName, ipl_raw[i]).ToString();
+
+                                    line[j] = String.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}",
+                                        id, modelName, interior, posX, posY, posZ, rotX, rotY, rotZ, rotW, lod);
+                                }
+                                int subtotal = (int)(100 * (float)j / (float)line.Length);
+                                bgWorker.ReportProgress(total, String.Format("{0} %\nPatching IPL files ({1}/{2}):\n{3} {4}%",
+                                    total.ToString(), i + 1, ipl.Length, ipl[i], subtotal.ToString()));
+                            }
+                            break;
+                    }
+                }
+                ipl_raw[i] = String.Join("\r\n", line);
+            }
+            return ipl_raw;
+        }
+
+        private static int GetLodInt(string modelName, string raw)
+        {
+            if (!modelName.StartsWith("lod", StringComparison.OrdinalIgnoreCase))
+            {
+                string[] line = Regex.Split(raw, "\r\n");
+                int current_line = 0;
+                int stat = 0;
+                for (int j = 0; j < line.Length; j++)
+                {
+                    switch (stat)
+                    {
+                        case 0:
+                            if (line[j].Equals("inst"))
+                            {
+                                stat = 1;
+                                current_line = 0;
+                            }
+                            break;
+                        case 1:
+                            if (line[j].Equals("end")) return -1;
+                            else
+                            {
+                                string[] dummy = Regex.Split(line[j], ", ");
+                                string lodName = "LOD" + modelName.Substring(3);
+                                if (dummy[1].Equals(lodName))
+                                    return current_line;
+                                current_line++;
+                            }
+                            break;
+                    }
+                }
+                return -1;
+            }
+            else
+                return -1;
         }
     }
 }

@@ -31,54 +31,64 @@ namespace IPL_IDE_Advanced_Editor
 
             // Filling Combo box with Maps loaded from settings.ini
             foreach (KeyValuePair<string, Dictionary<string, string>> item in Settings.Data)
-            {
                 if (item.Key.StartsWith("map", StringComparison.OrdinalIgnoreCase))
-                {
                     foreach (KeyValuePair<string, string> subItem in item.Value)
-                    {
                         if (subItem.Key.Equals("name", StringComparison.OrdinalIgnoreCase))
                             comboBoxLoadedMap.Items.Add(subItem.Value);
-                    }
-                }
-            }
-
-            try
-            {
-                comboBoxLoadedMap.SelectedIndex = Int32.Parse(Settings.Data["General"]["DefaultSelected"]) - 1;
-            }
-            catch
-            {
-                comboBoxLoadedMap.SelectedIndex = 0;
-            }
-
-            /*int i = 1;
-            string[] loadedMap = Settings.GetFromIni("Map" + i.ToString());
-            while (loadedMap.Length != 0)
-            {
-                comboBoxLoadedMap.Items.Add(loadedMap[0]);
-                i++;
-                loadedMap = Settings.GetFromIni("Map" + i.ToString());
-            }
-            comboBoxLoadedMap.SelectedIndex = Settings.Entry - 1;*/
+            comboBoxLoadedMap.SelectedIndex = Settings.GetDefaultSelected();
 
             // Input path
-            pathTextBox.Text = Settings.GetFromIni("DefaultEntryPath")[0];
+            inputTextBox.Text = Settings.Data["Map" + (Settings.GetDefaultSelected() + 1)]["InputPath"];
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            if (Editor.CheckFiles(pathTextBox.Text))
+            try
+            {
+                Editor.offset = Int32.Parse(IDoffsetTextBox.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Offset field has an invalid value, only integer numbers are accepted.",
+                    "Invalid Value on Offset Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                Editor.xOff = Decimal.Parse(XtextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture);
+                Editor.yOff = Decimal.Parse(YtextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture);
+                Editor.zOff = Decimal.Parse(ZtextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                MessageBox.Show("Coordinates Offset Fields have invalid values. Only integers or decimal numbers (points as decimal-separator) are accepted.",
+                    "Invalid Value on coordinates offsets", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!Directory.Exists(inputTextBox.Text))
+                MessageBox.Show("The path to input files does not exist. Make sure you put in the correct place and try again.",
+                    "Input folder error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
             {
                 EnableForm(false);
                 editProgressBar.Value = 0;
                 labelProgressStatus.Text = "0 %\nStarting.";
                 bgWorker.RunWorkerAsync();
             }
-            else
-                MessageBox.Show("One of more files are missing. Unable to make conversion.", "Error!");
         }
         private void browseButton_Click(object sender, EventArgs e)
         {
+            if (sender == inputBrowseButton)
+            {
+                int i = 0;
+            }
+            else if (sender == outputBrowseButton)
+            {
+                int i = 0;
+            }
+
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 while (Settings.StoreInIni("DefaultEntryPath", new string[1] { folderBrowserDialog1.SelectedPath }) == false)
@@ -90,24 +100,31 @@ namespace IPL_IDE_Advanced_Editor
                         "El archivo \"settings.ini\" ha sido reconstruido y pudiera haberse producido pérdida de información.",
                         "settings.ini error");
                 }
-                pathTextBox.Text = folderBrowserDialog1.SelectedPath;
+                inputTextBox.Text = folderBrowserDialog1.SelectedPath;
             }
         }
 
         private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            List<string> ide = Settings.GetAllFilesFrom(pathTextBox.Text, "*.ide"),
-                ipl = Settings.GetAllFilesFrom(pathTextBox.Text, "*.ipl");
+            List<string> ide = Settings.GetAllFilesFrom(inputTextBox.Text, "*.ide"),
+                ipl = Settings.GetAllFilesFrom(inputTextBox.Text, "*.ipl");
 
-            List<string> ipl_raw = Editor.GetRaw(pathTextBox.Text, ipl),
-                ide_raw = Editor.GetRaw(pathTextBox.Text, ide);
+            List<string> out_ide, out_ipl;
+            out_ide = new List<string>();
+            out_ipl = new List<string>();
+            foreach (string path in ide)
+            {
+                out_ide.Add(path.Replace(inputTextBox.Text, "output"));
+            }
+
+            List<string> ipl_raw = Editor.GetRaw(ipl),
+                ide_raw = Editor.GetRaw(ide);
 
             Editor.Ids = Editor.GetAllIds(ide, ide_raw);
 
             int startID = Editor.GetStartID(Editor.Ids),
                 finalID = Editor.GetFinalID(Editor.Ids),
                 interval = finalID - startID,
-                offset = Int32.Parse(IDoffsetTextBox.Text),
                 progress = startID,
                 percentageComplete = 0;
 
@@ -157,13 +174,13 @@ namespace IPL_IDE_Advanced_Editor
                                         dummy[0], ide[i], j + 1));
                                 }
                                 oldExpr = dummy[0] + "," + dummy[1];
-                                line[j] = (Id + offset - startID).ToString() + line[j].Substring(line[j].IndexOf(','));
+                                line[j] = (Id + Editor.offset - startID).ToString() + line[j].Substring(line[j].IndexOf(','));
                                 dummy = line[j].Split(',');
                                 newExpr = dummy[0] + "," + dummy[1];
                                 for (int i2 = 0; i2 < ipl_raw.Count; i2++)
                                     ipl_raw[i2] = ipl_raw[i2].Replace(oldExpr, newExpr);
                                 progress++;
-                                percentageComplete = (int)(100 * (float)progress / (float)(offset + interval));
+                                percentageComplete = (int)(100 * (float)progress / (float)(Editor.offset + interval));
                                 percentageComplete = (percentageComplete > 100) ? 100 : percentageComplete;
                                 bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nProcessing: " + ide[i]);
                             }
@@ -178,12 +195,7 @@ namespace IPL_IDE_Advanced_Editor
             Editor.PatchAllIpl(ipl, ipl_raw, bgWorker, percentageComplete);
 
             // Editing IPL coordinates
-            string xTxt = XtextBox.Text, yTxt = YtextBox.Text, zTxt = ZtextBox.Text;
-            if (
-                !xTxt.Equals("0") && !xTxt.StartsWith("0.") ||
-                !yTxt.Equals("0") && !yTxt.StartsWith("0.") ||
-                !zTxt.Equals("0") && !zTxt.StartsWith("0.")
-                )
+            if (Editor.xOff != 0 || Editor.yOff != 0 || Editor.zOff != 0)
             {
                 for (int i = 0; i < ipl_raw.Count; i++)
                 {
@@ -210,21 +222,21 @@ namespace IPL_IDE_Advanced_Editor
                                         posx = Decimal.Parse(dummy[3], NumberStyles.Any, CultureInfo.InvariantCulture);
                                         posy = Decimal.Parse(dummy[4], NumberStyles.Any, CultureInfo.InvariantCulture);
                                         posz = Decimal.Parse(dummy[5], NumberStyles.Any, CultureInfo.InvariantCulture);
-                                        posx += Decimal.Parse(xTxt, NumberStyles.Any, CultureInfo.InvariantCulture);
-                                        posy += Decimal.Parse(yTxt, NumberStyles.Any, CultureInfo.InvariantCulture);
-                                        posz += Decimal.Parse(zTxt, NumberStyles.Any, CultureInfo.InvariantCulture);
+                                        posx += Editor.xOff;
+                                        posy += Editor.yOff;
+                                        posz += Editor.zOff;
                                         dummy[3] = " " + posx.ToString().Replace(",",".");
                                         dummy[4] = " " + posy.ToString().Replace(",", ".");
                                         dummy[5] = " " + posz.ToString().Replace(",", ".");
                                         line[j] = String.Join(",", dummy);
                                     }
                                     LogCoord.LogCoordinates(dummy[3], dummy[4], dummy[5]);
-                                    LogCoord.WriteCoordErrorLine(dummy[0] + ", " + dummy[1], xTxt, yTxt, zTxt);
+                                    LogCoord.WriteCoordErrorLine(dummy[0] + ", " + dummy[1], Editor.xOff, Editor.yOff, Editor.zOff);
                                 }
                                 break;
                         }
                     }
-                    percentageComplete = (int)(100 * (float)progress / (float)(offset + interval));
+                    percentageComplete = (int)(100 * (float)progress / (float)(Editor.offset + interval));
                     bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nEditing coordinates of: " + ipl[i]);
                     ipl_raw[i] = String.Join("\r\n", line);
                 }
@@ -253,7 +265,8 @@ namespace IPL_IDE_Advanced_Editor
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             EnableForm(true);
-            MessageBox.Show("Editing process completed successfully!", "IDE/IPL editing");
+            MessageBox.Show("Editing process completed successfully!",
+                "IDE/IPL editing", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -272,8 +285,8 @@ namespace IPL_IDE_Advanced_Editor
             editProgressBar.Visible = !flag;
             labelProgressStatus.Visible = !flag;
             editButton.Enabled = flag;
-            pathTextBox.Enabled = flag;
-            browseButton.Enabled = flag;
+            inputTextBox.Enabled = flag;
+            inputBrowseButton.Enabled = flag;
             IDoffsetTextBox.Enabled = flag;
             XtextBox.Enabled = flag;
             YtextBox.Enabled = flag;

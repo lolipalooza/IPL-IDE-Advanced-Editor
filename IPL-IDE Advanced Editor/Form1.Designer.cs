@@ -39,9 +39,9 @@
             this.IDoffsetTextBox = new System.Windows.Forms.TextBox();
             this.YtextBox = new System.Windows.Forms.TextBox();
             this.XtextBox = new System.Windows.Forms.TextBox();
-            this.pathTextBox = new System.Windows.Forms.TextBox();
+            this.inputTextBox = new System.Windows.Forms.TextBox();
             this.pathLabel = new System.Windows.Forms.Label();
-            this.browseButton = new System.Windows.Forms.Button();
+            this.inputBrowseButton = new System.Windows.Forms.Button();
             this.browseSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.bgWorker = new System.ComponentModel.BackgroundWorker();
@@ -50,6 +50,9 @@
             this.comboBoxLoadedMap = new System.Windows.Forms.ComboBox();
             this.patchIdeCheckBox = new System.Windows.Forms.CheckBox();
             this.patchIdeLabel = new System.Windows.Forms.Label();
+            this.outputBrowseButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.outputTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -85,7 +88,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.XtextBox);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 199);
+            this.groupBox1.Location = new System.Drawing.Point(12, 231);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(365, 217);
             this.groupBox1.TabIndex = 2;
@@ -152,31 +155,31 @@
             this.XtextBox.TabIndex = 2;
             this.XtextBox.Text = "0.0";
             // 
-            // pathTextBox
+            // inputTextBox
             // 
-            this.pathTextBox.Location = new System.Drawing.Point(82, 163);
-            this.pathTextBox.Name = "pathTextBox";
-            this.pathTextBox.Size = new System.Drawing.Size(225, 20);
-            this.pathTextBox.TabIndex = 4;
+            this.inputTextBox.Location = new System.Drawing.Point(99, 163);
+            this.inputTextBox.Name = "inputTextBox";
+            this.inputTextBox.Size = new System.Drawing.Size(208, 20);
+            this.inputTextBox.TabIndex = 4;
             // 
             // pathLabel
             // 
             this.pathLabel.AutoSize = true;
             this.pathLabel.Location = new System.Drawing.Point(12, 166);
             this.pathLabel.Name = "pathLabel";
-            this.pathLabel.Size = new System.Drawing.Size(68, 13);
+            this.pathLabel.Size = new System.Drawing.Size(83, 13);
             this.pathLabel.TabIndex = 4;
-            this.pathLabel.Text = "Path of Files:";
+            this.pathLabel.Text = "Input Files Path:";
             // 
-            // browseButton
+            // inputBrowseButton
             // 
-            this.browseButton.Location = new System.Drawing.Point(313, 160);
-            this.browseButton.Name = "browseButton";
-            this.browseButton.Size = new System.Drawing.Size(58, 23);
-            this.browseButton.TabIndex = 5;
-            this.browseButton.Text = "Browse";
-            this.browseButton.UseVisualStyleBackColor = true;
-            this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
+            this.inputBrowseButton.Location = new System.Drawing.Point(313, 161);
+            this.inputBrowseButton.Name = "inputBrowseButton";
+            this.inputBrowseButton.Size = new System.Drawing.Size(58, 23);
+            this.inputBrowseButton.TabIndex = 5;
+            this.inputBrowseButton.Text = "Browse";
+            this.inputBrowseButton.UseVisualStyleBackColor = true;
+            this.inputBrowseButton.Click += new System.EventHandler(this.browseButton_Click);
             // 
             // bgWorker
             // 
@@ -235,17 +238,46 @@
             this.patchIdeLabel.TabIndex = 8;
             this.patchIdeLabel.Text = "Only check this if you know what you\'re doing";
             // 
+            // outputBrowseButton
+            // 
+            this.outputBrowseButton.Location = new System.Drawing.Point(313, 188);
+            this.outputBrowseButton.Name = "outputBrowseButton";
+            this.outputBrowseButton.Size = new System.Drawing.Size(58, 23);
+            this.outputBrowseButton.TabIndex = 12;
+            this.outputBrowseButton.Text = "Browse";
+            this.outputBrowseButton.UseVisualStyleBackColor = true;
+            this.outputBrowseButton.Click += new System.EventHandler(this.browseButton_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 193);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(67, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Output Path:";
+            // 
+            // outputTextBox
+            // 
+            this.outputTextBox.Location = new System.Drawing.Point(99, 190);
+            this.outputTextBox.Name = "outputTextBox";
+            this.outputTextBox.Size = new System.Drawing.Size(208, 20);
+            this.outputTextBox.TabIndex = 11;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(389, 428);
+            this.ClientSize = new System.Drawing.Size(389, 490);
+            this.Controls.Add(this.outputBrowseButton);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.outputTextBox);
             this.Controls.Add(this.comboBoxLoadedMap);
             this.Controls.Add(this.labelLoadedMap);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.browseButton);
+            this.Controls.Add(this.inputBrowseButton);
             this.Controls.Add(this.pathLabel);
-            this.Controls.Add(this.pathTextBox);
+            this.Controls.Add(this.inputTextBox);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
@@ -270,9 +302,9 @@
         private System.Windows.Forms.TextBox XtextBox;
         private System.Windows.Forms.ProgressBar editProgressBar;
         private System.Windows.Forms.Button editButton;
-        private System.Windows.Forms.TextBox pathTextBox;
+        private System.Windows.Forms.TextBox inputTextBox;
         private System.Windows.Forms.Label pathLabel;
-        private System.Windows.Forms.Button browseButton;
+        private System.Windows.Forms.Button inputBrowseButton;
         private System.Windows.Forms.SaveFileDialog browseSaveFileDialog;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.ComponentModel.BackgroundWorker bgWorker;
@@ -282,6 +314,9 @@
         private System.Windows.Forms.ComboBox comboBoxLoadedMap;
         private System.Windows.Forms.CheckBox patchIdeCheckBox;
         private System.Windows.Forms.Label patchIdeLabel;
+        private System.Windows.Forms.Button outputBrowseButton;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox outputTextBox;
     }
 }
 

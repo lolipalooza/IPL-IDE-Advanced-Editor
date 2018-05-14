@@ -17,6 +17,9 @@ namespace IPL_IDE_Advanced_Editor
             "IDE/IPL Advanced Editor v{0}.{1}.{2}",
             Editor.version, Editor.revision, Editor.patch);
 
+        public static decimal xOff, yOff, zOff;
+        public static int offset;
+
         public static Dictionary<string, List<string>> Ids;
 
         public static bool CheckFiles(string path)
@@ -114,12 +117,12 @@ namespace IPL_IDE_Advanced_Editor
             return finalId;
         }
 
-        static public List<string> GetRaw(string path, List<string> source)
+        static public List<string> GetRaw(List<string> source)
         {
             List<string> raw = new List<string>();
             for (var i = 0; i < source.Count; i++)
             {
-                using (FileStream fs = new FileStream(Path.Combine(path, source[i]), FileMode.Open, FileAccess.Read))
+                using (FileStream fs = new FileStream(source[i], FileMode.Open, FileAccess.Read))
                 {
                     using (StreamReader r = new StreamReader(fs))
                     {

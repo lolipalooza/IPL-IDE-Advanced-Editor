@@ -30,7 +30,7 @@ namespace IPL_IDE_Advanced_Editor
             Coord.Add(y);
             Coord.Add(z);
         }
-        public static void WriteCoordErrorLine(string ipl_item, string x, string y, string z)
+        public static void WriteCoordErrorLine(string ipl_item, decimal x_offset, decimal y_offset, decimal z_offset)
         {
             string x1 = LogCoord.Coord[0],
                 y1 = LogCoord.Coord[1],
@@ -44,9 +44,6 @@ namespace IPL_IDE_Advanced_Editor
                 dx2 = Decimal.Parse(LogCoord.Coord[3], NumberStyles.Any, CultureInfo.InvariantCulture),
                 dy2 = Decimal.Parse(LogCoord.Coord[4], NumberStyles.Any, CultureInfo.InvariantCulture),
                 dz2 = Decimal.Parse(LogCoord.Coord[5], NumberStyles.Any, CultureInfo.InvariantCulture);
-            decimal x_offset = Decimal.Parse(x, NumberStyles.Any, CultureInfo.InvariantCulture);
-            decimal y_offset = Decimal.Parse(y, NumberStyles.Any, CultureInfo.InvariantCulture);
-            decimal z_offset = Decimal.Parse(z, NumberStyles.Any, CultureInfo.InvariantCulture);
             if (x1.Split('.').Length > 1
                 && x2.Split('.').Length > 1
                 && x1.Split('.')[1] != x2.Split('.')[1]

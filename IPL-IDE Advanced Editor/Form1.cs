@@ -102,8 +102,9 @@ namespace IPL_IDE_Advanced_Editor
             // But... it is really necessary?
             // Besides, unexpected issues may occur when there are present 2 DrawDists
 
-            /*for (int i = 0; i < ide_raw.Length; i++)
-                ide_raw[i] = Editor.FixIde(ide_raw[i]);*/
+            if (patchIdeCheckBox.Checked)
+                for (int i = 0; i < ide_raw.Length; i++)
+                    ide_raw[i] = Editor.FixIde(ide_raw[i]);
 
             // Batch Id re-conversion in IDE / IPL files
             for (int i = 0; i < ide_raw.Length; i++)
@@ -258,6 +259,7 @@ namespace IPL_IDE_Advanced_Editor
             XtextBox.Enabled = flag;
             YtextBox.Enabled = flag;
             ZtextBox.Enabled = flag;
+            patchIdeCheckBox.Enabled = flag;
         }
     }
 }

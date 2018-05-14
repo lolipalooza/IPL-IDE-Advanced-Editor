@@ -48,6 +48,8 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.labelLoadedMap = new System.Windows.Forms.Label();
             this.comboBoxLoadedMap = new System.Windows.Forms.ComboBox();
+            this.patchIdeCheckBox = new System.Windows.Forms.CheckBox();
+            this.patchIdeLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -72,6 +74,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.patchIdeLabel);
+            this.groupBox1.Controls.Add(this.patchIdeCheckBox);
             this.groupBox1.Controls.Add(this.labelProgressStatus);
             this.groupBox1.Controls.Add(this.editButton);
             this.groupBox1.Controls.Add(this.editProgressBar);
@@ -83,7 +87,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 199);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(365, 158);
+            this.groupBox1.Size = new System.Drawing.Size(365, 217);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "IDE/IPL Edition";
@@ -91,7 +95,7 @@
             // labelProgressStatus
             // 
             this.labelProgressStatus.AutoSize = true;
-            this.labelProgressStatus.Location = new System.Drawing.Point(12, 86);
+            this.labelProgressStatus.Location = new System.Drawing.Point(12, 136);
             this.labelProgressStatus.Name = "labelProgressStatus";
             this.labelProgressStatus.Size = new System.Drawing.Size(81, 13);
             this.labelProgressStatus.TabIndex = 6;
@@ -100,7 +104,7 @@
             // 
             // editButton
             // 
-            this.editButton.Location = new System.Drawing.Point(233, 125);
+            this.editButton.Location = new System.Drawing.Point(233, 175);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(126, 23);
             this.editButton.TabIndex = 3;
@@ -110,7 +114,7 @@
             // 
             // editProgressBar
             // 
-            this.editProgressBar.Location = new System.Drawing.Point(15, 125);
+            this.editProgressBar.Location = new System.Drawing.Point(15, 175);
             this.editProgressBar.Name = "editProgressBar";
             this.editProgressBar.Size = new System.Drawing.Size(192, 23);
             this.editProgressBar.TabIndex = 2;
@@ -210,11 +214,32 @@
             this.comboBoxLoadedMap.TabIndex = 9;
             this.comboBoxLoadedMap.SelectedIndexChanged += new System.EventHandler(this.comboBoxLoadedMap_SelectedIndexChanged);
             // 
+            // patchIdeCheckBox
+            // 
+            this.patchIdeCheckBox.AutoSize = true;
+            this.patchIdeCheckBox.Location = new System.Drawing.Point(15, 89);
+            this.patchIdeCheckBox.Name = "patchIdeCheckBox";
+            this.patchIdeCheckBox.Size = new System.Drawing.Size(234, 17);
+            this.patchIdeCheckBox.TabIndex = 7;
+            this.patchIdeCheckBox.Text = "Add \"ObjectCount\" (always as 1) in IDE files";
+            this.patchIdeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // patchIdeLabel
+            // 
+            this.patchIdeLabel.AutoSize = true;
+            this.patchIdeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.patchIdeLabel.ForeColor = System.Drawing.Color.Red;
+            this.patchIdeLabel.Location = new System.Drawing.Point(12, 109);
+            this.patchIdeLabel.Name = "patchIdeLabel";
+            this.patchIdeLabel.Size = new System.Drawing.Size(268, 13);
+            this.patchIdeLabel.TabIndex = 8;
+            this.patchIdeLabel.Text = "Only check this if you know what you\'re doing";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(389, 369);
+            this.ClientSize = new System.Drawing.Size(389, 428);
             this.Controls.Add(this.comboBoxLoadedMap);
             this.Controls.Add(this.labelLoadedMap);
             this.Controls.Add(this.pictureBox1);
@@ -255,6 +280,8 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label labelLoadedMap;
         private System.Windows.Forms.ComboBox comboBoxLoadedMap;
+        private System.Windows.Forms.CheckBox patchIdeCheckBox;
+        private System.Windows.Forms.Label patchIdeLabel;
     }
 }
 

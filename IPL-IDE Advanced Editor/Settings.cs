@@ -12,66 +12,91 @@ namespace IPL_IDE_Advanced_Editor
         public static string ini = "settings.ini";
 
         public static string default_raw = "" +
-            "; IPL/IDE Advanced Editor" + "\r\n" +
-            "; Archivo de configuración" + "\r\n" +
-            "; En este archivo están almacenadas las entradas por defecto" + "\r\n" +
-            "; Aqui puedes agregar más entradas si lo deseas, pero cuidado de respetar las reglas de sintaxis" + "\r\n" +
-            "; o podrían ocurrir resultados inesperados. Si se desea restaurar settings.ini a su versión original" + "\r\n" +
-            "; entonces borrarlo y ejecutar nuevamente el IDE-IPL Advanced Editor.exe" + "\r\n" +
+            "; IPL/IDE Advanced Editor - Settings File" + "\r\n" +
+            "; =======================================" + "\r\n" +
+            "; Add as many Maps as you want with names \"Map\"+i, \"Ide\"+i, \"Ipl\"+i." + "\r\n" +
+            "; You need to register here relative or absoulte addresses of each Ide/Ipl file you want to process." + "\r\n" +
+            "; If you need to restore default settings, just delete this file and run once again 'IPL/IDE Advanced Editor.exe'" + "\r\n" +
+            "" + "\r\n" +
             "[DefaultEntryPath]" + "\r\n" +
             "input" + "\r\n" +
+            "" + "\r\n" +
             "[DefaultEntry]" + "\r\n" +
             "1" + "\r\n" +
+            "" + "\r\n" +
             "[Map1]" + "\r\n" +
             "GTA: Liberty City Stories Map" + "\r\n" +
+            "" + "\r\n" +
             "[Ide1]" + "\r\n" +
-            "commer\\commer.ide" + "\r\n" +
-            "indust\\indust.ide" + "\r\n" +
-            "suburb\\suburb.ide" + "\r\n" +
-            "underg\\underg.ide" + "\r\n" +
+            "lcs\\commer\\commer.ide" + "\r\n" +
+            "lcs\\indust\\indust.ide" + "\r\n" +
+            "lcs\\suburb\\suburb.ide" + "\r\n" +
+            "lcs\\underg\\underg.ide" + "\r\n" +
+            "" + "\r\n" +
             "[Ipl1]" + "\r\n" +
-            "commer\\comNbtm.ipl" + "\r\n" +
-            "commer\\comNtop.ipl" + "\r\n" +
-            "commer\\comSE.ipl" + "\r\n" +
-            "commer\\comSW.ipl" + "\r\n" +
-            "indust\\industNE.ipl" + "\r\n" +
-            "indust\\industNW.ipl" + "\r\n" +
-            "indust\\industSE.ipl" + "\r\n" +
-            "indust\\industSW.ipl" + "\r\n" +
-            "indust\\props.ipl" + "\r\n" +
-            "suburb\\landne.ipl" + "\r\n" +
-            "suburb\\landsw.ipl" + "\r\n" +
-            "underg\\underg.ipl" + "\r\n" +
-            "underg\\overview.ipl" + "\r\n" +
+            "lcs\\commer\\comNbtm.ipl" + "\r\n" +
+            "lcs\\commer\\comNtop.ipl" + "\r\n" +
+            "lcs\\commer\\comSE.ipl" + "\r\n" +
+            "lcs\\commer\\comSW.ipl" + "\r\n" +
+            "lcs\\indust\\industNE.ipl" + "\r\n" +
+            "lcs\\indust\\industNW.ipl" + "\r\n" +
+            "lcs\\indust\\industSE.ipl" + "\r\n" +
+            "lcs\\indust\\industSW.ipl" + "\r\n" +
+            "lcs\\indust\\props.ipl" + "\r\n" +
+            "lcs\\suburb\\landne.ipl" + "\r\n" +
+            "lcs\\suburb\\landsw.ipl" + "\r\n" +
+            "lcs\\underg\\underg.ipl" + "\r\n" +
+            "lcs\\underg\\overview.ipl" + "\r\n" +
+            "" + "\r\n" +
             "[Map2]" + "\r\n" +
             "GTA: Vice City Stories Map" + "\r\n" +
+            "" + "\r\n" +
             "[Ide2]" + "\r\n" +
-            "files\\beach.ide" + "\r\n" +
-            "files\\mainla.ide" + "\r\n" +
-            "files\\mall.ide" + "\r\n" +
+            "vcs\\beach.ide" + "\r\n" +
+            "vcs\\mainla.ide" + "\r\n" +
+            "vcs\\mall.ide" + "\r\n" +
+            "" + "\r\n" +
             "[Ipl2]" + "\r\n" +
-            "files\\airport.ipl" + "\r\n" +
-            "files\\airportN.ipl" + "\r\n" +
-            "files\\bridge.ipl" + "\r\n" +
-            "files\\cisland.ipl" + "\r\n" +
-            "files\\docks.ipl" + "\r\n" +
-            "files\\downtown.ipl" + "\r\n" +
-            "files\\downtows.ipl" + "\r\n" +
-            "files\\golf.ipl" + "\r\n" +
-            "files\\haiti.ipl" + "\r\n" +
-            "files\\haitin.ipl" + "\r\n" +
-            "files\\islandsf.ipl" + "\r\n" +
-            "files\\littleha.ipl" + "\r\n" +
-            "files\\mall.ipl" + "\r\n" +
-            "files\\nbeach.ipl" + "\r\n" +
-            "files\\nbeachbt.ipl" + "\r\n" +
-            "files\\nbeachw.ipl" + "\r\n" +
-            "files\\oceandN.ipl" + "\r\n" +
-            "files\\oceandrv.ipl" + "\r\n" +
-            "files\\other-interiors.ipl" + "\r\n" +
-            "files\\starisl.ipl" + "\r\n" +
-            "files\\washintn.ipl" + "\r\n" +
-            "files\\washints.ipl" + "\r\n" +
+            "vcs\\airport.ipl" + "\r\n" +
+            "vcs\\airportN.ipl" + "\r\n" +
+            "vcs\\bridge.ipl" + "\r\n" +
+            "vcs\\cisland.ipl" + "\r\n" +
+            "vcs\\docks.ipl" + "\r\n" +
+            "vcs\\downtown.ipl" + "\r\n" +
+            "vcs\\downtows.ipl" + "\r\n" +
+            "vcs\\golf.ipl" + "\r\n" +
+            "vcs\\haiti.ipl" + "\r\n" +
+            "vcs\\haitin.ipl" + "\r\n" +
+            "vcs\\islandsf.ipl" + "\r\n" +
+            "vcs\\littleha.ipl" + "\r\n" +
+            "vcs\\mall.ipl" + "\r\n" +
+            "vcs\\nbeach.ipl" + "\r\n" +
+            "vcs\\nbeachbt.ipl" + "\r\n" +
+            "vcs\\nbeachw.ipl" + "\r\n" +
+            "vcs\\oceandN.ipl" + "\r\n" +
+            "vcs\\oceandrv.ipl" + "\r\n" +
+            "vcs\\other-interiors.ipl" + "\r\n" +
+            "vcs\\starisl.ipl" + "\r\n" +
+            "vcs\\washintn.ipl" + "\r\n" +
+            "vcs\\washints.ipl" + "\r\n" +
+            "" + "\r\n" +
+            "[Map3]" + "\r\n" +
+            "LCS Colmap" + "\r\n" +
+            "" + "\r\n" +
+            "[Ide3]" + "\r\n" +
+            "lcscolmap\\colmap.ide" + "\r\n" +
+            "" + "\r\n" +
+            "[Ipl3]" + "\r\n" +
+            "lcscolmap\\colmap.ipl" + "\r\n" +
+            "" + "\r\n" +
+            "[Map4]" + "\r\n" +
+            "VCS Colmap" + "\r\n" +
+            "" + "\r\n" +
+            "[Ide4]" + "\r\n" +
+            "vcscolmap\\colmap.ide" + "\r\n" +
+            "" + "\r\n" +
+            "[Ipl4]" + "\r\n" +
+            "vcscolmap\\colmap.ipl" + "\r\n" +
             "";
 
         public static int Entry;

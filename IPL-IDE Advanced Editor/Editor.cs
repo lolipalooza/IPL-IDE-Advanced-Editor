@@ -11,7 +11,7 @@ namespace IPL_IDE_Advanced_Editor
 {
     class Editor
     {
-        private static byte version = 1, revision = 0, patch = 0;
+        private static byte version = 1, revision = 1, patch = 0;
 
         public static string fullname = String.Format(
             "IDE/IPL Advanced Editor v{0}.{1}.{2}",

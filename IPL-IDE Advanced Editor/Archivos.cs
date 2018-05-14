@@ -313,10 +313,10 @@ namespace IPL_IDE_Advanced_Editor
                             {
                                 string[] dummy = Regex.Split(line[j], ", ");
 
-                                string id = "", modelName = "", interior = "",
+                                string id = "", modelName = "", interior = "0",
                                     posX = "", posY = "", posZ = "",
-                                    scaleX = "", scaleY = "", scaleZ = "",
-                                    rotX = "", rotY = "", rotZ = "", rotW = "", lod = "";
+                                    scaleX = "1", scaleY = "1", scaleZ = "1",
+                                    rotX = "", rotY = "", rotZ = "", rotW = "", lod = "-1";
 
                                 // Input format
                                 if (dummy.Length == 12) // GTA III format Ipl
@@ -325,8 +325,6 @@ namespace IPL_IDE_Advanced_Editor
                                     posY = dummy[3]; posZ = dummy[4]; scaleX = dummy[5];
                                     scaleY = dummy[6]; scaleZ = dummy[7]; rotX = dummy[8];
                                     rotY = dummy[9]; rotZ = dummy[10]; rotW = dummy[11];
-
-                                    interior = "0";
                                 }
                                 else if (dummy.Length == 13) // GTA VC format Ipl
                                 {
@@ -340,8 +338,6 @@ namespace IPL_IDE_Advanced_Editor
                                     id = dummy[0]; modelName = dummy[1]; interior = dummy[2];
                                     posX = dummy[3]; posY = dummy[4]; posZ = dummy[5]; rotX = dummy[6];
                                     rotY = dummy[7]; rotZ = dummy[8]; rotW = dummy[9]; lod = dummy[10];
-
-                                    scaleX = "1"; scaleY = "1"; scaleZ = "1";
                                 }
 
                                 // Output format - TODO
@@ -357,7 +353,7 @@ namespace IPL_IDE_Advanced_Editor
                                 }
                                 else if (true) // San Andreas format
                                 {
-                                    lod = Archivos.GetLodInt(modelName, ipl_raw[i]).ToString();
+                                    lod = Archivos.GetLodInt(modelName, ipl_raw[i], lod).ToString();
 
                                     line[j] = String.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}",
                                         id, modelName, interior, posX, posY, posZ, rotX, rotY, rotZ, rotW, lod);
@@ -374,7 +370,7 @@ namespace IPL_IDE_Advanced_Editor
             return ipl_raw;
         }
 
-        private static int GetLodInt(string modelName, string raw)
+        private static int GetLodInt(string modelName, string raw, string prevLod)
         {
             if (!modelName.StartsWith("lod", StringComparison.OrdinalIgnoreCase))
             {
@@ -393,7 +389,7 @@ namespace IPL_IDE_Advanced_Editor
                             }
                             break;
                         case 1:
-                            if (line[j].Equals("end")) return -1;
+                            if (line[j].Equals("end")) stat = 2;
                             else
                             {
                                 string[] dummy = Regex.Split(line[j], ", ");
@@ -405,10 +401,10 @@ namespace IPL_IDE_Advanced_Editor
                             break;
                     }
                 }
-                return -1;
+                return Convert.ToInt32(prevLod);
             }
             else
-                return -1;
+                return Convert.ToInt32(prevLod);
         }
     }
 }

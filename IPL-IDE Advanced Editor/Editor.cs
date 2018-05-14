@@ -33,12 +33,12 @@ namespace IPL_IDE_Advanced_Editor
             }
             return true;
         }
-        public static Dictionary<string, List<string>> GetAllIds(string[] ide, string[] ide_raw)
+        public static Dictionary<string, List<string>> GetAllIds(List<string> ide, List<string> ide_raw)
         {
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
             foreach (string file in ide)
                 dict[file] = new List<string>();
-            for (int i = 0; i < ide.Length; i++)
+            for (int i = 0; i < ide.Count; i++)
             {
                 int stat = 0;
                 foreach (string line in Regex.Split(ide_raw[i], "\r\n"))
@@ -114,16 +114,16 @@ namespace IPL_IDE_Advanced_Editor
             return finalId;
         }
 
-        static public string[] GetRaw(string path, string[] source)
+        static public List<string> GetRaw(string path, List<string> source)
         {
-            string[] raw = new string[source.Length];
-            for (var i = 0; i < source.Length; i++)
+            List<string> raw = new List<string>();
+            for (var i = 0; i < source.Count; i++)
             {
                 using (FileStream fs = new FileStream(Path.Combine(path, source[i]), FileMode.Open, FileAccess.Read))
                 {
                     using (StreamReader r = new StreamReader(fs))
                     {
-                        raw[i] = r.ReadToEnd();
+                        raw.Add(r.ReadToEnd());
                     }
                 }
             }
@@ -294,9 +294,9 @@ namespace IPL_IDE_Advanced_Editor
             return ide_raw;
         }
 
-        public static string[] PatchAllIpl(string[] ipl, string[] ipl_raw, BackgroundWorker bgWorker, int total)
+        public static List<string> PatchAllIpl(List<string> ipl, List<string> ipl_raw, BackgroundWorker bgWorker, int total)
         {
-            for (int i = 0; i < ipl_raw.Length; i++)
+            for (int i = 0; i < ipl_raw.Count; i++)
             {
                 string[] line = Regex.Split(ipl_raw[i], "\r\n");
                 int stat = 0;
@@ -360,7 +360,7 @@ namespace IPL_IDE_Advanced_Editor
                                 }
                                 int subtotal = (int)(100 * (float)j / (float)line.Length);
                                 bgWorker.ReportProgress(total, String.Format("{0} %\nPatching IPL files ({1}/{2}):\n{3} {4}%",
-                                    total.ToString(), i + 1, ipl.Length, ipl[i], subtotal.ToString()));
+                                    total.ToString(), i + 1, ipl.Count, ipl[i], subtotal.ToString()));
                             }
                             break;
                     }

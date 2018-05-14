@@ -24,14 +24,34 @@ namespace IPL_IDE_Advanced_Editor
         {
             this.Text = Editor.fullname;
 
+            Settings.Initialize();
+
             if (!File.Exists(Settings.ini))
                 Editor.StoreRaw(Settings.ini, Settings.default_raw);
 
-            Settings.Entry = Int32.Parse(Settings.GetFromIni("DefaultEntry")[0]);
-            Settings.UpdateSettings();
-
             // Filling Combo box with Maps loaded from settings.ini
-            int i = 1;
+            foreach (KeyValuePair<string, Dictionary<string, string>> item in Settings.Data)
+            {
+                if (item.Key.StartsWith("map", StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (KeyValuePair<string, string> subItem in item.Value)
+                    {
+                        if (subItem.Key.Equals("name", StringComparison.OrdinalIgnoreCase))
+                            comboBoxLoadedMap.Items.Add(subItem.Value);
+                    }
+                }
+            }
+
+            try
+            {
+                comboBoxLoadedMap.SelectedIndex = Int32.Parse(Settings.Data["General"]["DefaultSelected"]) - 1;
+            }
+            catch
+            {
+                comboBoxLoadedMap.SelectedIndex = 0;
+            }
+
+            /*int i = 1;
             string[] loadedMap = Settings.GetFromIni("Map" + i.ToString());
             while (loadedMap.Length != 0)
             {
@@ -39,7 +59,7 @@ namespace IPL_IDE_Advanced_Editor
                 i++;
                 loadedMap = Settings.GetFromIni("Map" + i.ToString());
             }
-            comboBoxLoadedMap.SelectedIndex = Settings.Entry - 1;
+            comboBoxLoadedMap.SelectedIndex = Settings.Entry - 1;*/
 
             // Input path
             pathTextBox.Text = Settings.GetFromIni("DefaultEntryPath")[0];
@@ -76,19 +96,19 @@ namespace IPL_IDE_Advanced_Editor
 
         private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string[] ide = Settings.GetFromIni(Settings.Ide),
-                ipl = Settings.GetFromIni(Settings.Ipl);
+            List<string> ide = Settings.GetAllFilesFrom(pathTextBox.Text, "*.ide"),
+                ipl = Settings.GetAllFilesFrom(pathTextBox.Text, "*.ipl");
 
-            string[] ipl_raw = Editor.GetRaw(pathTextBox.Text, ipl),
+            List<string> ipl_raw = Editor.GetRaw(pathTextBox.Text, ipl),
                 ide_raw = Editor.GetRaw(pathTextBox.Text, ide);
 
             Editor.Ids = Editor.GetAllIds(ide, ide_raw);
 
-            int startID = Editor.GetStartID(Editor.Ids), //Editor.getStartID(ide_raw[0]),
-                finalID = Editor.GetFinalID(Editor.Ids), //Editor.getFinalID(ide_raw[ide_raw.Length - 1]),
+            int startID = Editor.GetStartID(Editor.Ids),
+                finalID = Editor.GetFinalID(Editor.Ids),
                 interval = finalID - startID,
                 offset = Int32.Parse(IDoffsetTextBox.Text),
-                progress = startID,//labelProgressStatus,
+                progress = startID,
                 percentageComplete = 0;
 
             LogIds.Log("Before editing");
@@ -101,13 +121,12 @@ namespace IPL_IDE_Advanced_Editor
             // Inserting always "1" in ObjectCount
             // But... it is really necessary?
             // Besides, unexpected issues may occur when there are present 2 DrawDists
-
             if (patchIdeCheckBox.Checked)
-                for (int i = 0; i < ide_raw.Length; i++)
+                for (int i = 0; i < ide_raw.Count; i++)
                     ide_raw[i] = Editor.FixIde(ide_raw[i]);
 
             // Batch Id re-conversion in IDE / IPL files
-            for (int i = 0; i < ide_raw.Length; i++)
+            for (int i = 0; i < ide_raw.Count; i++)
             {
                 string[] line = Regex.Split(ide_raw[i], "\r\n");    // ide_raw[i].Split(new [] { '\r', '\n' });
                 int stat = 0;
@@ -141,7 +160,7 @@ namespace IPL_IDE_Advanced_Editor
                                 line[j] = (Id + offset - startID).ToString() + line[j].Substring(line[j].IndexOf(','));
                                 dummy = line[j].Split(',');
                                 newExpr = dummy[0] + "," + dummy[1];
-                                for (int i2 = 0; i2 < ipl_raw.Length; i2++)
+                                for (int i2 = 0; i2 < ipl_raw.Count; i2++)
                                     ipl_raw[i2] = ipl_raw[i2].Replace(oldExpr, newExpr);
                                 progress++;
                                 percentageComplete = (int)(100 * (float)progress / (float)(offset + interval));
@@ -166,7 +185,7 @@ namespace IPL_IDE_Advanced_Editor
                 !zTxt.Equals("0") && !zTxt.StartsWith("0.")
                 )
             {
-                for (int i = 0; i < ipl_raw.Length; i++)
+                for (int i = 0; i < ipl_raw.Count; i++)
                 {
                     LogCoord.ReportFile(ipl[i]);
                     string[] line = Regex.Split(ipl_raw[i], "\r\n");
@@ -219,12 +238,12 @@ namespace IPL_IDE_Advanced_Editor
 
             // Building new IDE / IPL files
             bgWorker.ReportProgress(100, "100 %\nStoring.");
-            for (int i = 0; i < ide_raw.Length; i++)
+            for (int i = 0; i < ide_raw.Count; i++)
             {
                 Editor.CreateDirectoryOf(Path.Combine("output", ide[i]));
                 Editor.StoreRaw(Path.Combine("output", ide[i]), ide_raw[i]);
             }
-            for (int i = 0; i < ipl_raw.Length; i++)
+            for (int i = 0; i < ipl_raw.Count; i++)
             {
                 Editor.CreateDirectoryOf(Path.Combine("output", ipl[i]));
                 Editor.StoreRaw(Path.Combine("output", ipl[i]), ipl_raw[i]);

@@ -90,7 +90,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 231);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(365, 217);
+            this.groupBox1.Size = new System.Drawing.Size(365, 220);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "IDE/IPL Edition";
@@ -107,7 +107,7 @@
             // 
             // editButton
             // 
-            this.editButton.Location = new System.Drawing.Point(233, 175);
+            this.editButton.Location = new System.Drawing.Point(233, 188);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(126, 23);
             this.editButton.TabIndex = 3;
@@ -117,7 +117,7 @@
             // 
             // editProgressBar
             // 
-            this.editProgressBar.Location = new System.Drawing.Point(15, 175);
+            this.editProgressBar.Location = new System.Drawing.Point(15, 188);
             this.editProgressBar.Name = "editProgressBar";
             this.editProgressBar.Size = new System.Drawing.Size(192, 23);
             this.editProgressBar.TabIndex = 2;
@@ -204,16 +204,16 @@
             this.labelLoadedMap.AutoSize = true;
             this.labelLoadedMap.Location = new System.Drawing.Point(12, 137);
             this.labelLoadedMap.Name = "labelLoadedMap";
-            this.labelLoadedMap.Size = new System.Drawing.Size(90, 13);
+            this.labelLoadedMap.Size = new System.Drawing.Size(52, 13);
             this.labelLoadedMap.TabIndex = 7;
-            this.labelLoadedMap.Text = "Loaded map files:";
+            this.labelLoadedMap.Text = "Map files:";
             // 
             // comboBoxLoadedMap
             // 
             this.comboBoxLoadedMap.FormattingEnabled = true;
-            this.comboBoxLoadedMap.Location = new System.Drawing.Point(108, 134);
+            this.comboBoxLoadedMap.Location = new System.Drawing.Point(99, 134);
             this.comboBoxLoadedMap.Name = "comboBoxLoadedMap";
-            this.comboBoxLoadedMap.Size = new System.Drawing.Size(202, 21);
+            this.comboBoxLoadedMap.Size = new System.Drawing.Size(208, 21);
             this.comboBoxLoadedMap.TabIndex = 9;
             this.comboBoxLoadedMap.SelectedIndexChanged += new System.EventHandler(this.comboBoxLoadedMap_SelectedIndexChanged);
             // 
@@ -268,7 +268,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(389, 490);
+            this.ClientSize = new System.Drawing.Size(389, 459);
             this.Controls.Add(this.outputBrowseButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.outputTextBox);

@@ -22,20 +22,6 @@ namespace IPL_IDE_Advanced_Editor
 
         public static Dictionary<string, List<string>> Ids;
 
-        public static bool CheckFiles(string path)
-        {
-            foreach (string ide in Settings.GetFromIni(Settings.Ide))
-            {
-                if (!File.Exists(Path.Combine(path, ide)))
-                    return false;
-            }
-            foreach (string ipl in Settings.GetFromIni(Settings.Ipl))
-            {
-                if (!File.Exists(Path.Combine(path, ipl)))
-                    return false;
-            }
-            return true;
-        }
         public static Dictionary<string, List<string>> GetAllIds(List<string> ide, List<string> ide_raw)
         {
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
@@ -156,12 +142,14 @@ namespace IPL_IDE_Advanced_Editor
         }
         static public void CreateDirectoryOf(string file)
         {
-            string[] path = file.Split('\\');   //Regex.Split(file, "\\");
-            if (path.Length > 1)
+            List<string> path = file.Split('\\').ToList();   //Regex.Split(file, "\\");
+            if (path.Count > 1)
             {
-                path[path.Length - 1] = "";
-                if (!Directory.Exists(Path.Combine(path)))
-                    Directory.CreateDirectory(Path.Combine(path));
+                path.RemoveAt(path.Count - 1);
+                if (Path.GetPathRoot(file) != String.Empty)
+                    path[0] = Path.GetPathRoot(file);
+                if (!Directory.Exists(Path.Combine(path.ToArray())))
+                    Directory.CreateDirectory(Path.Combine(path.ToArray()));
             }
         }
         /*static public void LOD_names(string path)
@@ -363,7 +351,7 @@ namespace IPL_IDE_Advanced_Editor
                                 }
                                 int subtotal = (int)(100 * (float)j / (float)line.Length);
                                 bgWorker.ReportProgress(total, String.Format("{0} %\nPatching IPL files ({1}/{2}):\n{3} {4}%",
-                                    total.ToString(), i + 1, ipl.Count, ipl[i], subtotal.ToString()));
+                                    total.ToString(), i + 1, ipl.Count, ipl[i].Split('\\').ToList().Last(), subtotal.ToString()));
                             }
                             break;
                     }
@@ -408,6 +396,14 @@ namespace IPL_IDE_Advanced_Editor
             }
             else
                 return Convert.ToInt32(prevLod);
+        }
+
+        public static List<string> CreateOutputPaths(List<string> inputPaths, string inputPathBase, string outputPathBase)
+        {
+            List<string> outputPaths = new List<string>();
+            foreach (string path in inputPaths)
+                outputPaths.Add(path.Replace(inputPathBase, outputPathBase));
+            return outputPaths;
         }
     }
 }

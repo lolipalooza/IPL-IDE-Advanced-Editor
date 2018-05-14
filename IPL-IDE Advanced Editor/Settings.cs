@@ -29,86 +29,6 @@ namespace IPL_IDE_Advanced_Editor
 
         public static Dictionary<string, Dictionary<string, string>> Data;
 
-        public static int Entry;
-        public static string Ipl, Ide, Map;
-        public static void UpdateSettings()
-        {
-            Settings.Map = "Map" + Settings.Entry.ToString();
-            Settings.Ipl = "Ipl" + Settings.Entry.ToString();
-            Settings.Ide = "Ide" + Settings.Entry.ToString();
-        }
-        static public string[] GetFromIni(string entry)
-        {
-            string raw = Editor.GetRaw(Settings.ini);
-            string[] lines = Regex.Split(raw, "\r\n");
-            int stat = 0;
-            List<string> result = new List<string>();
-            foreach(string line in lines)
-            {
-                if (line.StartsWith(";") || line.StartsWith("#") || line.StartsWith("//")) continue;
-                switch (stat)
-                {
-                    case 0:
-                        if (line.StartsWith("[") && line.EndsWith("]"))
-                        {
-                            string dummy = line.Substring(1, line.Length - 2);
-                            if (dummy.Equals(entry))
-                                stat = 1;
-                        }
-                        break;
-                    case 1:
-                        if (line.StartsWith("["))
-                            stat = 2;
-                        else if (line != String.Empty) result.Add(line);
-                        break;
-                }
-            }
-            return result.ToArray();
-        }
-        static public bool StoreInIni(string entry, string[] data)
-        {
-            string raw = Editor.GetRaw(Settings.ini);
-            string[] line = Regex.Split(raw, "\r\n");
-            List<string> list = new List<string>();
-            int stat = 0;
-            for (int i = 0; i < line.Length; i++)
-            {
-                switch (stat)
-                {
-                    case 0:
-                        list.Add(line[i]);
-                        if (line[i].StartsWith("[") && line[i].EndsWith("]"))
-                        {
-                            string dummy = line[i].Substring(1, line[i].Length - 2);
-                            if (dummy.Equals(entry)) stat = 1;
-                        }
-                        break;
-                    case 1:
-                        for (int j = 0; j < data.Length; j++)
-                            list.Add(data[j]);
-                        stat = 2;
-                        break;
-                    case 2:
-                        if (line[i].StartsWith("[") && line[i].EndsWith("]"))
-                        {
-                            stat = 3;
-                            list.Add(line[i]);
-                        }
-                        break;
-                    case 3:
-                        list.Add(line[i]);
-                        break;
-                }
-            }
-            if (stat == 0) return false;
-            else
-            {
-                raw = string.Join("\r\n", list);
-                Editor.StoreRaw(Settings.ini, raw);
-                return true;
-            }
-        }
-
         public static void Initialize()
         {
             Settings.Data = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
@@ -166,16 +86,16 @@ namespace IPL_IDE_Advanced_Editor
             Editor.StoreRaw(Settings.ini, String.Join("\r\n", save));
         }
 
-        public static int GetDefaultSelected()
+        public static int GetSelected()
         {
             int defaultSelected;
             try
             {
-                defaultSelected = Int32.Parse(Settings.Data["General"]["DefaultSelected"]) - 1;
+                defaultSelected = Int32.Parse(Settings.Data["General"]["DefaultSelected"]);
             }
             catch
             {
-                defaultSelected = 0;
+                defaultSelected = 1;
             }
             return defaultSelected;
         }

@@ -35,10 +35,13 @@ namespace IPL_IDE_Advanced_Editor
                     foreach (KeyValuePair<string, string> subItem in item.Value)
                         if (subItem.Key.Equals("name", StringComparison.OrdinalIgnoreCase))
                             comboBoxLoadedMap.Items.Add(subItem.Value);
-            comboBoxLoadedMap.SelectedIndex = Settings.GetDefaultSelected();
 
-            // Input path
-            inputTextBox.Text = Settings.Data["Map" + (Settings.GetDefaultSelected() + 1)]["InputPath"];
+            int sel = Settings.GetSelected();
+            comboBoxLoadedMap.SelectedIndex = sel - 1;
+
+            // Path to files
+            inputTextBox.Text = Settings.Data["Map" + sel]["InputPath"];
+            outputTextBox.Text = Settings.Data["Map" + sel]["OutputPath"];
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -80,27 +83,20 @@ namespace IPL_IDE_Advanced_Editor
         }
         private void browseButton_Click(object sender, EventArgs e)
         {
-            if (sender == inputBrowseButton)
-            {
-                int i = 0;
-            }
-            else if (sender == outputBrowseButton)
-            {
-                int i = 0;
-            }
-
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                while (Settings.StoreInIni("DefaultEntryPath", new string[1] { folderBrowserDialog1.SelectedPath }) == false)
+                int sel = Settings.GetSelected();
+                if (sender == inputBrowseButton)
                 {
-                    File.Delete(Settings.ini);
-                    Editor.StoreRaw(Settings.ini, Settings.default_raw);
-                    MessageBox.Show(
-                        "Un error ha ocurrido mientras se trataba de almacenar datos de configuración. " +
-                        "El archivo \"settings.ini\" ha sido reconstruido y pudiera haberse producido pérdida de información.",
-                        "settings.ini error");
+                    Settings.Data["Map" + sel]["InputPath"] = folderBrowserDialog1.SelectedPath;
+                    inputTextBox.Text = folderBrowserDialog1.SelectedPath;
                 }
-                inputTextBox.Text = folderBrowserDialog1.SelectedPath;
+                else if (sender == outputBrowseButton)
+                {
+                    Settings.Data["Map" + sel]["OutputPath"] = folderBrowserDialog1.SelectedPath;
+                    outputTextBox.Text = folderBrowserDialog1.SelectedPath;
+                }
+                Settings.Save();
             }
         }
 
@@ -109,13 +105,8 @@ namespace IPL_IDE_Advanced_Editor
             List<string> ide = Settings.GetAllFilesFrom(inputTextBox.Text, "*.ide"),
                 ipl = Settings.GetAllFilesFrom(inputTextBox.Text, "*.ipl");
 
-            List<string> out_ide, out_ipl;
-            out_ide = new List<string>();
-            out_ipl = new List<string>();
-            foreach (string path in ide)
-            {
-                out_ide.Add(path.Replace(inputTextBox.Text, "output"));
-            }
+            List<string> out_ide = Editor.CreateOutputPaths(ide, inputTextBox.Text, outputTextBox.Text),
+                        out_ipl = Editor.CreateOutputPaths(ipl, inputTextBox.Text, outputTextBox.Text);
 
             List<string> ipl_raw = Editor.GetRaw(ipl),
                 ide_raw = Editor.GetRaw(ide);
@@ -182,7 +173,7 @@ namespace IPL_IDE_Advanced_Editor
                                 progress++;
                                 percentageComplete = (int)(100 * (float)progress / (float)(Editor.offset + interval));
                                 percentageComplete = (percentageComplete > 100) ? 100 : percentageComplete;
-                                bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nProcessing: " + ide[i]);
+                                bgWorker.ReportProgress(percentageComplete, percentageComplete.ToString() + " %\nProcessing: " + ide[i].Split('\\').ToList().Last());
                             }
                             break;
                     }
@@ -252,13 +243,13 @@ namespace IPL_IDE_Advanced_Editor
             bgWorker.ReportProgress(100, "100 %\nStoring.");
             for (int i = 0; i < ide_raw.Count; i++)
             {
-                Editor.CreateDirectoryOf(Path.Combine("output", ide[i]));
-                Editor.StoreRaw(Path.Combine("output", ide[i]), ide_raw[i]);
+                Editor.CreateDirectoryOf(out_ide[i]);
+                Editor.StoreRaw(out_ide[i], ide_raw[i]);
             }
             for (int i = 0; i < ipl_raw.Count; i++)
             {
-                Editor.CreateDirectoryOf(Path.Combine("output", ipl[i]));
-                Editor.StoreRaw(Path.Combine("output", ipl[i]), ipl_raw[i]);
+                Editor.CreateDirectoryOf(out_ipl[i]);
+                Editor.StoreRaw(out_ipl[i], ipl_raw[i]);
             }
         }
 
@@ -276,9 +267,12 @@ namespace IPL_IDE_Advanced_Editor
         }
         private void comboBoxLoadedMap_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.Entry = Int32.Parse((comboBoxLoadedMap.SelectedIndex + 1).ToString());
-            Settings.UpdateSettings();
-            Settings.StoreInIni("DefaultEntry", new string[1] { (comboBoxLoadedMap.SelectedIndex + 1).ToString() });
+            int selected = comboBoxLoadedMap.SelectedIndex + 1;
+            Settings.Data["General"]["DefaultSelected"] = selected.ToString();
+            Settings.Save();
+
+            inputTextBox.Text = Settings.Data["Map" + selected]["InputPath"];
+            outputTextBox.Text = Settings.Data["Map" + selected]["OutputPath"];
         }
         private void EnableForm(bool flag)
         {
@@ -286,12 +280,15 @@ namespace IPL_IDE_Advanced_Editor
             labelProgressStatus.Visible = !flag;
             editButton.Enabled = flag;
             inputTextBox.Enabled = flag;
+            outputTextBox.Enabled = flag;
             inputBrowseButton.Enabled = flag;
+            outputBrowseButton.Enabled = flag;
             IDoffsetTextBox.Enabled = flag;
             XtextBox.Enabled = flag;
             YtextBox.Enabled = flag;
             ZtextBox.Enabled = flag;
             patchIdeCheckBox.Enabled = flag;
+            comboBoxLoadedMap.Enabled = flag;
         }
     }
 }

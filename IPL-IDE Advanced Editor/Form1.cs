@@ -22,10 +22,10 @@ namespace IPL_IDE_Advanced_Editor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = Archivos.fullname;
+            this.Text = Editor.fullname;
 
             if (!File.Exists(Settings.ini))
-                Archivos.StoreRaw(Settings.ini, Settings.default_raw);
+                Editor.StoreRaw(Settings.ini, Settings.default_raw);
 
             Settings.Entry = Int32.Parse(Settings.GetFromIni("DefaultEntry")[0]);
             Settings.UpdateSettings();
@@ -47,7 +47,7 @@ namespace IPL_IDE_Advanced_Editor
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            if (Archivos.CheckFiles(pathTextBox.Text))
+            if (Editor.CheckFiles(pathTextBox.Text))
             {
                 EnableForm(false);
                 editProgressBar.Value = 0;
@@ -64,7 +64,7 @@ namespace IPL_IDE_Advanced_Editor
                 while (Settings.StoreInIni("DefaultEntryPath", new string[1] { folderBrowserDialog1.SelectedPath }) == false)
                 {
                     File.Delete(Settings.ini);
-                    Archivos.StoreRaw(Settings.ini, Settings.default_raw);
+                    Editor.StoreRaw(Settings.ini, Settings.default_raw);
                     MessageBox.Show(
                         "Un error ha ocurrido mientras se trataba de almacenar datos de configuración. " +
                         "El archivo \"settings.ini\" ha sido reconstruido y pudiera haberse producido pérdida de información.",
@@ -79,20 +79,20 @@ namespace IPL_IDE_Advanced_Editor
             string[] ide = Settings.GetFromIni(Settings.Ide),
                 ipl = Settings.GetFromIni(Settings.Ipl);
 
-            string[] ipl_raw = Archivos.GetRaw(pathTextBox.Text, ipl),
-                ide_raw = Archivos.GetRaw(pathTextBox.Text, ide);
+            string[] ipl_raw = Editor.GetRaw(pathTextBox.Text, ipl),
+                ide_raw = Editor.GetRaw(pathTextBox.Text, ide);
 
-            Archivos.Ids = Archivos.GetAllIds(ide, ide_raw);
+            Editor.Ids = Editor.GetAllIds(ide, ide_raw);
 
-            int startID = Archivos.GetStartID(Archivos.Ids), //Editor.getStartID(ide_raw[0]),
-                finalID = Archivos.GetFinalID(Archivos.Ids), //Editor.getFinalID(ide_raw[ide_raw.Length - 1]),
+            int startID = Editor.GetStartID(Editor.Ids), //Editor.getStartID(ide_raw[0]),
+                finalID = Editor.GetFinalID(Editor.Ids), //Editor.getFinalID(ide_raw[ide_raw.Length - 1]),
                 interval = finalID - startID,
                 offset = Int32.Parse(IDoffsetTextBox.Text),
                 progress = startID,//labelProgressStatus,
                 percentageComplete = 0;
 
             LogIds.Log("Before editing");
-            LogIds.Log(Archivos.Ids);
+            LogIds.Log(Editor.Ids);
 
             // Editor.FixIde will reconvert ide lines that previously had this structure:
             // ID, ModelName, TextureName, DrawDist, Flags
@@ -155,7 +155,7 @@ namespace IPL_IDE_Advanced_Editor
 
             // Checking if IPL is in diferent format than output, and converting if necessary
             // And also, re-assigning LODs (if format is San Andreas)
-            Archivos.PatchAllIpl(ipl, ipl_raw, bgWorker, percentageComplete);
+            Editor.PatchAllIpl(ipl, ipl_raw, bgWorker, percentageComplete);
 
             // Editing IPL coordinates
             string xTxt = XtextBox.Text, yTxt = YtextBox.Text, zTxt = ZtextBox.Text;
@@ -211,22 +211,22 @@ namespace IPL_IDE_Advanced_Editor
                 LogCoord.EndLogging("coordinate_change.log");
             }
 
-            Archivos.Ids = Archivos.GetAllIds(ide, ide_raw);
+            Editor.Ids = Editor.GetAllIds(ide, ide_raw);
             LogIds.Log("After editing");
-            LogIds.Log(Archivos.Ids);
+            LogIds.Log(Editor.Ids);
             //LogIds.EndLogging("editor_ids.log");
 
             // Building new IDE / IPL files
             bgWorker.ReportProgress(100, "100 %\nStoring.");
             for (int i = 0; i < ide_raw.Length; i++)
             {
-                Archivos.CreateDirectoryOf(Path.Combine("output", ide[i]));
-                Archivos.StoreRaw(Path.Combine("output", ide[i]), ide_raw[i]);
+                Editor.CreateDirectoryOf(Path.Combine("output", ide[i]));
+                Editor.StoreRaw(Path.Combine("output", ide[i]), ide_raw[i]);
             }
             for (int i = 0; i < ipl_raw.Length; i++)
             {
-                Archivos.CreateDirectoryOf(Path.Combine("output", ipl[i]));
-                Archivos.StoreRaw(Path.Combine("output", ipl[i]), ipl_raw[i]);
+                Editor.CreateDirectoryOf(Path.Combine("output", ipl[i]));
+                Editor.StoreRaw(Path.Combine("output", ipl[i]), ipl_raw[i]);
             }
         }
 

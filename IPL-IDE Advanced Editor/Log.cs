@@ -76,7 +76,7 @@ namespace IPL_IDE_Advanced_Editor
         public static void EndLogging(string logfile)
         {
             if (LogCoord.Raw != String.Empty)
-                Archivos.StoreRaw("coordinate_change.log", LogCoord.Raw);
+                Editor.StoreRaw("coordinate_change.log", LogCoord.Raw);
         }
     }
 
@@ -115,7 +115,7 @@ namespace IPL_IDE_Advanced_Editor
         public static void EndLogging(string logfile)
         {
             if (LogIds.Raw != String.Empty)
-                Archivos.StoreRaw(logfile, LogIds.Raw);
+                Editor.StoreRaw(logfile, LogIds.Raw);
         }
     }
 }

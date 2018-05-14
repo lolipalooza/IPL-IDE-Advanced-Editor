@@ -24,10 +24,10 @@ namespace IPL_IDE_Advanced_Editor
         {
             this.Text = Editor.fullname;
 
-            Settings.Initialize();
-
             if (!File.Exists(Settings.ini))
                 Editor.StoreRaw(Settings.ini, Settings.default_raw);
+
+            Settings.Initialize();
 
             // Filling Combo box with Maps loaded from settings.ini
             foreach (KeyValuePair<string, Dictionary<string, string>> item in Settings.Data)
@@ -39,20 +39,25 @@ namespace IPL_IDE_Advanced_Editor
             int sel = Settings.GetSelected();
             comboBoxLoadedMap.SelectedIndex = sel - 1;
 
-            // Path to files
-            inputTextBox.Text = Settings.Data["Map" + sel]["InputPath"];
-            outputTextBox.Text = Settings.Data["Map" + sel]["OutputPath"];
+            // Output Format not implemented yet
+            outputFormatLabel.Enabled = false;
+            outputFotmatIII_rBtn.Enabled = false;
+            outputFormatVC_rBtn.Enabled = false;
+            outputFormatSA_rBtn.Enabled = false;
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
+            Editor.PatchIDEs = patchIdeCheckBox.Checked;
+            Editor.IgnoreLODs = ignoreLOD_checkBox.Checked;
+
             try
             {
-                Editor.offset = Int32.Parse(IDoffsetTextBox.Text);
+                Editor.offset = UInt32.Parse(IDoffsetTextBox.Text);
             }
             catch
             {
-                MessageBox.Show("Offset field has an invalid value, only integer numbers are accepted.",
+                MessageBox.Show("Offset field has an invalid value, only positive integer numbers are accepted.",
                     "Invalid Value on Offset Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -129,7 +134,7 @@ namespace IPL_IDE_Advanced_Editor
             // Inserting always "1" in ObjectCount
             // But... it is really necessary?
             // Besides, unexpected issues may occur when there are present 2 DrawDists
-            if (patchIdeCheckBox.Checked)
+            if (Editor.PatchIDEs)
                 for (int i = 0; i < ide_raw.Count; i++)
                     ide_raw[i] = Editor.FixIde(ide_raw[i]);
 
@@ -257,7 +262,7 @@ namespace IPL_IDE_Advanced_Editor
         {
             EnableForm(true);
             MessageBox.Show("Editing process completed successfully!",
-                "IDE/IPL editing", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                "IDE/IPL editing", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -288,7 +293,58 @@ namespace IPL_IDE_Advanced_Editor
             YtextBox.Enabled = flag;
             ZtextBox.Enabled = flag;
             patchIdeCheckBox.Enabled = flag;
+            ignoreLOD_checkBox.Enabled = flag;
             comboBoxLoadedMap.Enabled = flag;
+        }
+
+        private void patchIdeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (patchIdeCheckBox.Checked)
+            {
+                DialogResult patchIdeDialogResult = MessageBox.Show("You have selected option 'Patch IDEs'." + "\r\n"
+                    + "" + "\r\n"
+                    + "Before continuing, you must know this is a poorly developed routine, and can have unexpected results" + "\r\n"
+                    + "All it does is replace Item Definition lines that have this structure:" + "\r\n"
+                    + "" + "\r\n"
+                    + "ID, ModelName, TextureName, DrawDist, Flags" + "\r\n"
+                    + "" + "\r\n"
+                    + "With this new one:" + "\r\n"
+                    + "" + "\r\n"
+                    + "ID, ModelName, TextureName, ObjectCount, DrawDist, Flags" + "\r\n"
+                    + "" + "\r\n"
+                    + "Adding a 1 as value to Object Count always." + "\r\n"
+                    + "" + "\r\n"
+                    + "But IDE lines can have more data than that. Actually Wiki modding pages describe IDE lines as:" + "\r\n"
+                    + "ID, ModelName, TextureName, ObjectCount, DrawDist, [DrawDist2, ...], Flags" + "\r\n"
+                    + "" + "\r\n"
+                    + "Which means that if you have a file with more data than previous lines, you may have loss of data." + "\r\n"
+                    + "So, only proceed with conversion if you really know what you're doing." + "\r\n"
+                    + "",
+                    "Patch IDE confirmation dialog", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                if (patchIdeDialogResult == DialogResult.Cancel)
+                    patchIdeCheckBox.Checked = false;
+            }
+        }
+
+        private void ignoreLOD_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ignoreLOD_checkBox.Checked)
+            {
+                DialogResult ignoreLODDialogResult = MessageBox.Show("You have selected option 'Ignore LODs build'." + "\r\n"
+                    + "" + "\r\n"
+                    + "Checking this option will reduce conversion time, but in consequence IPL files will not do LOD recognition, which means map LODs models will not work appropriately." + "\r\n"
+                    + "" + "\r\n"
+                    + "Only check this option if you make sure your IPL file has no LODs at all." + "\r\n"
+                    + "" + "\r\n"
+                    + "If you have no idea, just leave this field always unchecked." + "\r\n"
+                    + "Maintain option checked?" + "\r\n"
+                    + "",
+                    "Patch IDE confirmation dialog", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                if (ignoreLODDialogResult == DialogResult.Cancel)
+                    ignoreLOD_checkBox.Checked = false;
+            }
         }
     }
 }

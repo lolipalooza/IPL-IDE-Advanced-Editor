@@ -96,10 +96,13 @@ namespace IPL_IDE_Advanced_Editor
             Dictionary<int, string> raw_lines = new Dictionary<int, string>();
             foreach (KeyValuePair<string, List<string>> item in Ids)
             {
-                raw_lines_ids.Add(Int32.Parse(item.Value.First()));
-                raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]]
-                    = String.Format("File {0} - first Id: {1}, last id: {2}\r\n",
-                    item.Key, item.Value.First(), item.Value.Last());
+                if (item.Value.Count > 0)
+                {
+                    raw_lines_ids.Add(Int32.Parse(item.Value.First()));
+                    raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]]
+                        = String.Format("File {0} - first Id: {1}, last id: {2}\r\n",
+                        item.Key, item.Value.First(), item.Value.Last());
+                }
             }
             raw_lines_ids.Sort();
             foreach (int id in raw_lines_ids)

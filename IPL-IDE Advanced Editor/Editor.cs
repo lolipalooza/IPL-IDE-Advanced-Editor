@@ -11,14 +11,15 @@ namespace IPL_IDE_Advanced_Editor
 {
     class Editor
     {
-        private static byte version = 1, revision = 1, patch = 0;
+        private static byte version = 2, revision = 0, patch = 0;
 
         public static string fullname = String.Format(
             "IDE/IPL Advanced Editor v{0}.{1}.{2}",
             Editor.version, Editor.revision, Editor.patch);
 
         public static decimal xOff, yOff, zOff;
-        public static int offset;
+        public static uint offset;
+        public static bool PatchIDEs, IgnoreLODs;
 
         public static Dictionary<string, List<string>> Ids;
 
@@ -344,7 +345,8 @@ namespace IPL_IDE_Advanced_Editor
                                 }
                                 else if (true) // San Andreas format
                                 {
-                                    lod = Editor.GetLodInt(modelName, ipl_raw[i], lod).ToString();
+                                    if (!Editor.IgnoreLODs)
+                                        lod = Editor.GetLodInt(modelName, ipl_raw[i], lod).ToString();
 
                                     line[j] = String.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}",
                                         id, modelName, interior, posX, posY, posZ, rotX, rotY, rotZ, rotW, lod);

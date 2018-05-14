@@ -22,8 +22,34 @@ namespace IPL_IDE_Advanced_Editor
             "DefaultSelected = 1" + "\r\n" +
             "" + "\r\n" +
             "[Map1]" + "\r\n" +
+            "name = GTA: Liberty City Stories Map" + "\r\n" +
+            "InputPath = input\\lcs" + "\r\n" +
+            "OutputPath = output\\lcs" + "\r\n" +
+            "" + "\r\n" +
+            "[Map2]" + "\r\n" +
+            "name = GTA: Vice City Stories Map" + "\r\n" +
+            "InputPath = input\\vcs" + "\r\n" +
+            "OutputPath = output\\vcs" + "\r\n" +
+            "" + "\r\n" +
+            "[Map3]" + "\r\n" +
+            "name = LCS Colmap" + "\r\n" +
+            "InputPath = input\\lcscolmap" + "\r\n" +
+            "OutputPath = output\\lcscolmap" + "\r\n" +
+            "" + "\r\n" +
+            "[Map4]" + "\r\n" +
+            "name = VCS Colmap" + "\r\n" +
+            "InputPath = input\\vcscolmap" + "\r\n" +
+            "OutputPath = output\\vcscolmap" + "\r\n" +
+            "" + "\r\n" +
+            "[Map5]" + "\r\n" +
+            "name = LCS Android" + "\r\n" +
+            "InputPath = input\\lcs_android" + "\r\n" +
+            "OutputPath = output\\lcs_android" + "\r\n" +
+            "" + "\r\n" +
+            "[Map6]" + "\r\n" +
             "name = GTA III" + "\r\n" +
-            "path = input" + "\r\n" +
+            "InputPath = input\\gta3" + "\r\n" +
+            "OutputPath = output\\gta3" + "\r\n" +
             "" + "\r\n" +
             "";
 

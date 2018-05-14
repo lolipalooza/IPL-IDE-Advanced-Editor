@@ -1,9 +1,2 @@
-*/Debug/*.ini
-*/Debug/*.log
-*/Debug/input/*
-*/Debug/output/*
-
-*/Release/*.ini
-*/Release/*.log
-*/Release/input/*
-*/Release/output/*
+**/Debug/
+**/Release/

@@ -128,7 +128,6 @@ namespace IPL_IDE_Advanced_Editor
             LogIds.Ids = new List<string>();
             List<int> raw_lines_ids = new List<int>();
             Dictionary<int, string> raw_lines = new Dictionary<int, string>();
-            List<string> missing = new List<string>();
             foreach (KeyValuePair<string, List<string>> item in dictionary)
             {
                 if (item.Value.Count > 0)
@@ -138,6 +137,7 @@ namespace IPL_IDE_Advanced_Editor
                         = String.Format("File {0} - first Id: {1}, last id: {2}\r\n",
                         item.Key, item.Value.First(), item.Value.Last());
 
+                    List<string> missing = new List<string>();
                     int estimated = Convert.ToInt32(item.Value.First());
                     foreach (string id in item.Value)
                     {
@@ -157,8 +157,6 @@ namespace IPL_IDE_Advanced_Editor
                         raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]] += "\r\n";
                     }
                     raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]] += "\r\n";
-
-                    missing = new List<string>();
                 }
             }
             raw_lines_ids.Sort();

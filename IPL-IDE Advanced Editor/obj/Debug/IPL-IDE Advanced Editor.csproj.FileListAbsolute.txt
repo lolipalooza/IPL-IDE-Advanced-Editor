@@ -12,3 +12,4 @@ C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Adva
 C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.exe
 C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.pdb
 C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\bin\Debug\IPL-IDE Advanced Editor.pdb
+C:\Users\Admin\Important Stuff\Proyectos C#\IPL-IDE Advanced Editor\IPL-IDE Advanced Editor\obj\Debug\IPL-IDE Advanced Editor.csprojResolveAssemblyReference.cache

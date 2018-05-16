@@ -82,7 +82,7 @@ namespace IPL_IDE_Advanced_Editor
             }
 
             if (!Directory.Exists(inputTextBox.Text))
-                MessageBox.Show("The path to input files does not exist. Make sure you put in the correct place and try again.",
+                MessageBox.Show("The path to input files does not exist. Make sure you put it in the correct place and try again.",
                     "Input folder error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
@@ -269,11 +269,33 @@ namespace IPL_IDE_Advanced_Editor
 
         private void generateIdReportButton_Click(object sender, EventArgs e)
         {
-            List<string> ide = Settings.GetAllFilesFrom(inputTextBox.Text, "*.ide"),
-                ipl = Settings.GetAllFilesFrom(inputTextBox.Text, "*.ipl");
+            string path_to_files = "";
 
-            List<string> out_ide = Editor.CreateOutputPaths(ide, inputTextBox.Text, outputTextBox.Text),
-                        out_ipl = Editor.CreateOutputPaths(ipl, inputTextBox.Text, outputTextBox.Text);
+            if (inputRadioButton.Checked)
+            {
+                if (!Directory.Exists(inputTextBox.Text))
+                {
+                    MessageBox.Show("The path to input files does not exist. Make sure you put it in the correct place and try again.",
+                        "Input folder error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                path_to_files = inputTextBox.Text;
+            }
+            else if (outputRadioButton.Checked)
+            {
+                if (!Directory.Exists(outputTextBox.Text))
+                {
+                    MessageBox.Show("The path to output files does not exist. Make sure you put it in the correct place and try again.",
+                        "Output folder error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                path_to_files = outputTextBox.Text;
+            }
+
+            List<string> ide = Settings.GetAllFilesFrom(path_to_files, "*.ide"),
+                ipl = Settings.GetAllFilesFrom(path_to_files, "*.ipl");
 
             List<string> ipl_raw = Raw.Get(ipl), ide_raw = Raw.Get(ide);
 
@@ -289,7 +311,12 @@ namespace IPL_IDE_Advanced_Editor
             LogIds.Init();
             LogIds.Log(String.Format("Map '{0}' Ids Report:\r\n=================",
                 Settings.Data["Map"+Settings.GetSelected()]["name"]));
-            LogIds.LogWithMissingIds(Editor.Ids);
+
+            if (ignoreMissingCheckBox.Checked)
+                LogIds.Log(Editor.Ids);
+            else
+                LogIds.LogWithMissingIds(Editor.Ids);
+
             LogIds.EndLogging("id_report.log");
 
             MessageBox.Show(String.Format("Report File '{0}' successfully generated.", "id_report.log"),

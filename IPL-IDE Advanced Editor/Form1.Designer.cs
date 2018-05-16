@@ -58,10 +58,13 @@
             this.label3 = new System.Windows.Forms.Label();
             this.outputTextBox = new System.Windows.Forms.TextBox();
             this.logGroupBox = new System.Windows.Forms.GroupBox();
-            this.generateIdReportButton = new System.Windows.Forms.Button();
-            this.idReportBgWorker = new System.ComponentModel.BackgroundWorker();
             this.logProgressLabel = new System.Windows.Forms.Label();
+            this.generateIdReportButton = new System.Windows.Forms.Button();
             this.loggingProgressBar = new System.Windows.Forms.ProgressBar();
+            this.idReportBgWorker = new System.ComponentModel.BackgroundWorker();
+            this.inputRadioButton = new System.Windows.Forms.RadioButton();
+            this.outputRadioButton = new System.Windows.Forms.RadioButton();
+            this.ignoreMissingCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.logGroupBox.SuspendLayout();
@@ -322,6 +325,9 @@
             // 
             // logGroupBox
             // 
+            this.logGroupBox.Controls.Add(this.ignoreMissingCheckBox);
+            this.logGroupBox.Controls.Add(this.outputRadioButton);
+            this.logGroupBox.Controls.Add(this.inputRadioButton);
             this.logGroupBox.Controls.Add(this.logProgressLabel);
             this.logGroupBox.Controls.Add(this.generateIdReportButton);
             this.logGroupBox.Controls.Add(this.loggingProgressBar);
@@ -331,24 +337,6 @@
             this.logGroupBox.TabIndex = 13;
             this.logGroupBox.TabStop = false;
             this.logGroupBox.Text = "Logging options";
-            // 
-            // generateIdReportButton
-            // 
-            this.generateIdReportButton.Location = new System.Drawing.Point(6, 19);
-            this.generateIdReportButton.Name = "generateIdReportButton";
-            this.generateIdReportButton.Size = new System.Drawing.Size(107, 46);
-            this.generateIdReportButton.TabIndex = 16;
-            this.generateIdReportButton.Text = "Generate IDE files Id report";
-            this.generateIdReportButton.UseVisualStyleBackColor = true;
-            this.generateIdReportButton.Click += new System.EventHandler(this.generateIdReportButton_Click);
-            // 
-            // idReportBgWorker
-            // 
-            this.idReportBgWorker.WorkerReportsProgress = true;
-            this.idReportBgWorker.WorkerSupportsCancellation = true;
-            this.idReportBgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.idReportBgWorker_DoWork);
-            this.idReportBgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.idReportBgWorker_ProgressChanged);
-            this.idReportBgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.idReportBgWorker_RunWorkerCompleted);
             // 
             // logProgressLabel
             // 
@@ -360,6 +348,16 @@
             this.logProgressLabel.Text = "Progress Status";
             this.logProgressLabel.Visible = false;
             // 
+            // generateIdReportButton
+            // 
+            this.generateIdReportButton.Location = new System.Drawing.Point(6, 19);
+            this.generateIdReportButton.Name = "generateIdReportButton";
+            this.generateIdReportButton.Size = new System.Drawing.Size(107, 46);
+            this.generateIdReportButton.TabIndex = 16;
+            this.generateIdReportButton.Text = "Generate IDE files Id report";
+            this.generateIdReportButton.UseVisualStyleBackColor = true;
+            this.generateIdReportButton.Click += new System.EventHandler(this.generateIdReportButton_Click);
+            // 
             // loggingProgressBar
             // 
             this.loggingProgressBar.Location = new System.Drawing.Point(192, 62);
@@ -367,6 +365,46 @@
             this.loggingProgressBar.Size = new System.Drawing.Size(167, 32);
             this.loggingProgressBar.TabIndex = 16;
             this.loggingProgressBar.Visible = false;
+            // 
+            // idReportBgWorker
+            // 
+            this.idReportBgWorker.WorkerReportsProgress = true;
+            this.idReportBgWorker.WorkerSupportsCancellation = true;
+            this.idReportBgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.idReportBgWorker_DoWork);
+            this.idReportBgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.idReportBgWorker_ProgressChanged);
+            this.idReportBgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.idReportBgWorker_RunWorkerCompleted);
+            // 
+            // inputRadioButton
+            // 
+            this.inputRadioButton.AutoSize = true;
+            this.inputRadioButton.Checked = true;
+            this.inputRadioButton.Location = new System.Drawing.Point(123, 19);
+            this.inputRadioButton.Name = "inputRadioButton";
+            this.inputRadioButton.Size = new System.Drawing.Size(48, 17);
+            this.inputRadioButton.TabIndex = 16;
+            this.inputRadioButton.TabStop = true;
+            this.inputRadioButton.Text = "input";
+            this.inputRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // outputRadioButton
+            // 
+            this.outputRadioButton.AutoSize = true;
+            this.outputRadioButton.Location = new System.Drawing.Point(173, 19);
+            this.outputRadioButton.Name = "outputRadioButton";
+            this.outputRadioButton.Size = new System.Drawing.Size(55, 17);
+            this.outputRadioButton.TabIndex = 18;
+            this.outputRadioButton.Text = "output";
+            this.outputRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // ignoreMissingCheckBox
+            // 
+            this.ignoreMissingCheckBox.AutoSize = true;
+            this.ignoreMissingCheckBox.Location = new System.Drawing.Point(123, 42);
+            this.ignoreMissingCheckBox.Name = "ignoreMissingCheckBox";
+            this.ignoreMissingCheckBox.Size = new System.Drawing.Size(109, 17);
+            this.ignoreMissingCheckBox.TabIndex = 19;
+            this.ignoreMissingCheckBox.Text = "Ignore missing ids";
+            this.ignoreMissingCheckBox.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -433,6 +471,9 @@
         private System.ComponentModel.BackgroundWorker idReportBgWorker;
         private System.Windows.Forms.Label logProgressLabel;
         private System.Windows.Forms.ProgressBar loggingProgressBar;
+        private System.Windows.Forms.RadioButton outputRadioButton;
+        private System.Windows.Forms.RadioButton inputRadioButton;
+        private System.Windows.Forms.CheckBox ignoreMissingCheckBox;
     }
 }
 

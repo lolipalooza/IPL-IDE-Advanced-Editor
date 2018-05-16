@@ -32,25 +32,29 @@ namespace IPL_IDE_Advanced_Editor
                 dict[file] = new List<string>();
             for (int i = 0; i < ide.Count; i++)
             {
+                List<int> ids = new List<int>();
                 int stat = 0;
                 foreach (string line in Regex.Split(ide_raw[i], "\r\n"))
                 {
-                    switch (stat)
-                    {
-                        case 0:
-                            if (line.Equals("objs") || line.Equals("tobj")) stat = 1;
-                            break;
-                        case 1:
-                            if (line.Equals("end")) stat = 0;
-                            else
-                            {
-                                string[] dummy = line.Split(',');
-                                dict[ide[i]].Add(dummy[0]);
-                            }
-                            break;
-                    }
+                    if (!line.StartsWith("#") && !line.Equals(String.Empty))
+                        switch (stat)
+                        {
+                            case 0:
+                                if (line.Equals("objs") || line.Equals("tobj")) stat = 1;
+                                break;
+                            case 1:
+                                if (line.Equals("end")) stat = 0;
+                                else
+                                {
+                                    string[] dummy = line.Split(',');
+                                    ids.Add(Int32.Parse(dummy[0]));
+                                }
+                                break;
+                        }
                 }
-                dict[ide[i]].Sort();
+                ids.Sort();
+                foreach (int id in ids)
+                    dict[ide[i]].Add(id.ToString());
             }
             return dict;
         }

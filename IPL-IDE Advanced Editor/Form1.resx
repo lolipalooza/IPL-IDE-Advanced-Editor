@@ -130,8 +130,8 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAlUAAADzCAYAAACv3ONoAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOvQAA
-        Dr0BR/uQrQAA/3lJREFUeF7M/f1vXEeWpotKsCVLNChKNCmSQjLFBD9TSTETSqaopESKIFkEJVqWZVt2
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOvAAA
+        DrwBlbxySQAA/3lJREFUeF7M/f1vXEeWpotKsCVLNChKNCmSQjLFBD9TSTETSqaopESKIFkEJVqWZVt2
         W64qu6uqv05P90HPDPr2OZh7//W47/OuWJlJWu7pORfTuD8sROzYEbG/I55Ya0Xsa53uepmb+azMpkx/
         VubufW4hPvP5jXJ3OoTt+XtT2jeWmakbTpudmSoL89NlZfmLst66XzZWl8ay9qBsVok0wgdlfZV8mfe+
         yt6zLDdmSmPx83JX57D44IvSUn0L96fLLMec/dzxZR1n5eF97Vuy+BibKY0yvfhFmZqdLrdVB7LcXSkL
@@ -3260,6 +3260,9 @@
         ctFC9Aoi5XtQoS/JFNpCng5g3ZQdUR99CkWzJF3o88TRfYv/C1ycYA+luX5cAAAAAElFTkSuQmCC
 </value>
   </data>
+  <metadata name="idReportBgWorker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>462, 17</value>
+  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABABEAMDACAAEAAQAwAwAAFgEAACAgAgABAAEAMAEAAEYEAAAQEAIAAQABALAAAAB2BQAAEAwCAAEA

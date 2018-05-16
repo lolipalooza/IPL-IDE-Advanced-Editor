@@ -32,6 +32,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.outputFormatSA_rBtn = new System.Windows.Forms.RadioButton();
+            this.outputFormatVC_rBtn = new System.Windows.Forms.RadioButton();
+            this.outputFormatLabel = new System.Windows.Forms.Label();
+            this.outputFotmatIII_rBtn = new System.Windows.Forms.RadioButton();
+            this.ignoreLOD_checkBox = new System.Windows.Forms.CheckBox();
             this.patchIdeCheckBox = new System.Windows.Forms.CheckBox();
             this.labelProgressStatus = new System.Windows.Forms.Label();
             this.editButton = new System.Windows.Forms.Button();
@@ -52,13 +57,14 @@
             this.outputBrowseButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.outputTextBox = new System.Windows.Forms.TextBox();
-            this.ignoreLOD_checkBox = new System.Windows.Forms.CheckBox();
-            this.outputFotmatIII_rBtn = new System.Windows.Forms.RadioButton();
-            this.outputFormatLabel = new System.Windows.Forms.Label();
-            this.outputFormatVC_rBtn = new System.Windows.Forms.RadioButton();
-            this.outputFormatSA_rBtn = new System.Windows.Forms.RadioButton();
+            this.logGroupBox = new System.Windows.Forms.GroupBox();
+            this.generateIdReportButton = new System.Windows.Forms.Button();
+            this.idReportBgWorker = new System.ComponentModel.BackgroundWorker();
+            this.logProgressLabel = new System.Windows.Forms.Label();
+            this.loggingProgressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.logGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -102,6 +108,58 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "IDE/IPL Edition";
+            // 
+            // outputFormatSA_rBtn
+            // 
+            this.outputFormatSA_rBtn.AutoSize = true;
+            this.outputFormatSA_rBtn.Checked = true;
+            this.outputFormatSA_rBtn.Location = new System.Drawing.Point(252, 114);
+            this.outputFormatSA_rBtn.Name = "outputFormatSA_rBtn";
+            this.outputFormatSA_rBtn.Size = new System.Drawing.Size(86, 17);
+            this.outputFormatSA_rBtn.TabIndex = 15;
+            this.outputFormatSA_rBtn.TabStop = true;
+            this.outputFormatSA_rBtn.Text = "San Andreas";
+            this.outputFormatSA_rBtn.UseVisualStyleBackColor = true;
+            // 
+            // outputFormatVC_rBtn
+            // 
+            this.outputFormatVC_rBtn.AutoSize = true;
+            this.outputFormatVC_rBtn.Location = new System.Drawing.Point(180, 114);
+            this.outputFormatVC_rBtn.Name = "outputFormatVC_rBtn";
+            this.outputFormatVC_rBtn.Size = new System.Drawing.Size(66, 17);
+            this.outputFormatVC_rBtn.TabIndex = 14;
+            this.outputFormatVC_rBtn.Text = "Vice City";
+            this.outputFormatVC_rBtn.UseVisualStyleBackColor = true;
+            // 
+            // outputFormatLabel
+            // 
+            this.outputFormatLabel.AutoSize = true;
+            this.outputFormatLabel.Location = new System.Drawing.Point(12, 116);
+            this.outputFormatLabel.Name = "outputFormatLabel";
+            this.outputFormatLabel.Size = new System.Drawing.Size(77, 13);
+            this.outputFormatLabel.TabIndex = 13;
+            this.outputFormatLabel.Text = "Output Format:";
+            // 
+            // outputFotmatIII_rBtn
+            // 
+            this.outputFotmatIII_rBtn.AutoSize = true;
+            this.outputFotmatIII_rBtn.Location = new System.Drawing.Point(112, 114);
+            this.outputFotmatIII_rBtn.Name = "outputFotmatIII_rBtn";
+            this.outputFotmatIII_rBtn.Size = new System.Drawing.Size(59, 17);
+            this.outputFotmatIII_rBtn.TabIndex = 9;
+            this.outputFotmatIII_rBtn.Text = "GTA III";
+            this.outputFotmatIII_rBtn.UseVisualStyleBackColor = true;
+            // 
+            // ignoreLOD_checkBox
+            // 
+            this.ignoreLOD_checkBox.AutoSize = true;
+            this.ignoreLOD_checkBox.Location = new System.Drawing.Point(123, 89);
+            this.ignoreLOD_checkBox.Name = "ignoreLOD_checkBox";
+            this.ignoreLOD_checkBox.Size = new System.Drawing.Size(111, 17);
+            this.ignoreLOD_checkBox.TabIndex = 8;
+            this.ignoreLOD_checkBox.Text = "Ignore LODs build";
+            this.ignoreLOD_checkBox.UseVisualStyleBackColor = true;
+            this.ignoreLOD_checkBox.CheckedChanged += new System.EventHandler(this.ignoreLOD_checkBox_CheckedChanged);
             // 
             // patchIdeCheckBox
             // 
@@ -262,63 +320,60 @@
             this.outputTextBox.Size = new System.Drawing.Size(208, 20);
             this.outputTextBox.TabIndex = 11;
             // 
-            // ignoreLOD_checkBox
+            // logGroupBox
             // 
-            this.ignoreLOD_checkBox.AutoSize = true;
-            this.ignoreLOD_checkBox.Location = new System.Drawing.Point(123, 89);
-            this.ignoreLOD_checkBox.Name = "ignoreLOD_checkBox";
-            this.ignoreLOD_checkBox.Size = new System.Drawing.Size(111, 17);
-            this.ignoreLOD_checkBox.TabIndex = 8;
-            this.ignoreLOD_checkBox.Text = "Ignore LODs build";
-            this.ignoreLOD_checkBox.UseVisualStyleBackColor = true;
-            this.ignoreLOD_checkBox.CheckedChanged += new System.EventHandler(this.ignoreLOD_checkBox_CheckedChanged);
+            this.logGroupBox.Controls.Add(this.logProgressLabel);
+            this.logGroupBox.Controls.Add(this.generateIdReportButton);
+            this.logGroupBox.Controls.Add(this.loggingProgressBar);
+            this.logGroupBox.Location = new System.Drawing.Point(12, 488);
+            this.logGroupBox.Name = "logGroupBox";
+            this.logGroupBox.Size = new System.Drawing.Size(365, 100);
+            this.logGroupBox.TabIndex = 13;
+            this.logGroupBox.TabStop = false;
+            this.logGroupBox.Text = "Logging options";
             // 
-            // outputFotmatIII_rBtn
+            // generateIdReportButton
             // 
-            this.outputFotmatIII_rBtn.AutoSize = true;
-            this.outputFotmatIII_rBtn.Location = new System.Drawing.Point(112, 114);
-            this.outputFotmatIII_rBtn.Name = "outputFotmatIII_rBtn";
-            this.outputFotmatIII_rBtn.Size = new System.Drawing.Size(59, 17);
-            this.outputFotmatIII_rBtn.TabIndex = 9;
-            this.outputFotmatIII_rBtn.Text = "GTA III";
-            this.outputFotmatIII_rBtn.UseVisualStyleBackColor = true;
+            this.generateIdReportButton.Location = new System.Drawing.Point(6, 19);
+            this.generateIdReportButton.Name = "generateIdReportButton";
+            this.generateIdReportButton.Size = new System.Drawing.Size(107, 46);
+            this.generateIdReportButton.TabIndex = 16;
+            this.generateIdReportButton.Text = "Generate IDE files Id report";
+            this.generateIdReportButton.UseVisualStyleBackColor = true;
+            this.generateIdReportButton.Click += new System.EventHandler(this.generateIdReportButton_Click);
             // 
-            // outputFormatLabel
+            // idReportBgWorker
             // 
-            this.outputFormatLabel.AutoSize = true;
-            this.outputFormatLabel.Location = new System.Drawing.Point(12, 116);
-            this.outputFormatLabel.Name = "outputFormatLabel";
-            this.outputFormatLabel.Size = new System.Drawing.Size(77, 13);
-            this.outputFormatLabel.TabIndex = 13;
-            this.outputFormatLabel.Text = "Output Format:";
+            this.idReportBgWorker.WorkerReportsProgress = true;
+            this.idReportBgWorker.WorkerSupportsCancellation = true;
+            this.idReportBgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.idReportBgWorker_DoWork);
+            this.idReportBgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.idReportBgWorker_ProgressChanged);
+            this.idReportBgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.idReportBgWorker_RunWorkerCompleted);
             // 
-            // outputFormatVC_rBtn
+            // logProgressLabel
             // 
-            this.outputFormatVC_rBtn.AutoSize = true;
-            this.outputFormatVC_rBtn.Location = new System.Drawing.Point(180, 114);
-            this.outputFormatVC_rBtn.Name = "outputFormatVC_rBtn";
-            this.outputFormatVC_rBtn.Size = new System.Drawing.Size(66, 17);
-            this.outputFormatVC_rBtn.TabIndex = 14;
-            this.outputFormatVC_rBtn.Text = "Vice City";
-            this.outputFormatVC_rBtn.UseVisualStyleBackColor = true;
+            this.logProgressLabel.AutoSize = true;
+            this.logProgressLabel.Location = new System.Drawing.Point(189, 46);
+            this.logProgressLabel.Name = "logProgressLabel";
+            this.logProgressLabel.Size = new System.Drawing.Size(81, 13);
+            this.logProgressLabel.TabIndex = 17;
+            this.logProgressLabel.Text = "Progress Status";
+            this.logProgressLabel.Visible = false;
             // 
-            // outputFormatSA_rBtn
+            // loggingProgressBar
             // 
-            this.outputFormatSA_rBtn.AutoSize = true;
-            this.outputFormatSA_rBtn.Checked = true;
-            this.outputFormatSA_rBtn.Location = new System.Drawing.Point(252, 114);
-            this.outputFormatSA_rBtn.Name = "outputFormatSA_rBtn";
-            this.outputFormatSA_rBtn.Size = new System.Drawing.Size(86, 17);
-            this.outputFormatSA_rBtn.TabIndex = 15;
-            this.outputFormatSA_rBtn.TabStop = true;
-            this.outputFormatSA_rBtn.Text = "San Andreas";
-            this.outputFormatSA_rBtn.UseVisualStyleBackColor = true;
+            this.loggingProgressBar.Location = new System.Drawing.Point(192, 62);
+            this.loggingProgressBar.Name = "loggingProgressBar";
+            this.loggingProgressBar.Size = new System.Drawing.Size(167, 32);
+            this.loggingProgressBar.TabIndex = 16;
+            this.loggingProgressBar.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(389, 494);
+            this.ClientSize = new System.Drawing.Size(389, 603);
+            this.Controls.Add(this.logGroupBox);
             this.Controls.Add(this.outputBrowseButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.outputTextBox);
@@ -336,6 +391,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.logGroupBox.ResumeLayout(false);
+            this.logGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -371,6 +428,11 @@
         private System.Windows.Forms.RadioButton outputFormatVC_rBtn;
         private System.Windows.Forms.Label outputFormatLabel;
         private System.Windows.Forms.RadioButton outputFotmatIII_rBtn;
+        private System.Windows.Forms.GroupBox logGroupBox;
+        private System.Windows.Forms.Button generateIdReportButton;
+        private System.ComponentModel.BackgroundWorker idReportBgWorker;
+        private System.Windows.Forms.Label logProgressLabel;
+        private System.Windows.Forms.ProgressBar loggingProgressBar;
     }
 }
 

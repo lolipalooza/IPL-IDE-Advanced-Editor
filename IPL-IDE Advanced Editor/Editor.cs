@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ namespace IPL_IDE_Advanced_Editor
         public static decimal xOff, yOff, zOff;
         public static uint offset;
         public static bool PatchIDEs, IgnoreLODs;
+        public static int Progress, PercentageCompleted, Interval;
 
         public static Dictionary<string, List<string>> Ids;
 
@@ -48,6 +50,7 @@ namespace IPL_IDE_Advanced_Editor
                             break;
                     }
                 }
+                dict[ide[i]].Sort();
             }
             return dict;
         }
@@ -104,43 +107,12 @@ namespace IPL_IDE_Advanced_Editor
             return finalId;
         }
 
-        static public List<string> GetRaw(List<string> source)
+        public static void UpdateProgress()
         {
-            List<string> raw = new List<string>();
-            for (var i = 0; i < source.Count; i++)
-            {
-                using (FileStream fs = new FileStream(source[i], FileMode.Open, FileAccess.Read))
-                {
-                    using (StreamReader r = new StreamReader(fs))
-                    {
-                        raw.Add(r.ReadToEnd());
-                    }
-                }
-            }
-            return raw;
+            Editor.PercentageCompleted = (int)(100 * (float)Editor.Progress / (float)(Editor.offset + Editor.Interval));
+            Editor.PercentageCompleted = (Editor.PercentageCompleted > 100) ? 100 : Editor.PercentageCompleted;
         }
-        static public string GetRaw(string fullpath)
-        {
-            string raw;
-            using (FileStream fs = new FileStream(fullpath, FileMode.Open, FileAccess.Read))
-            {
-                using (StreamReader r = new StreamReader(fs))
-                {
-                    raw = r.ReadToEnd();
-                }
-            }
-            return raw;
-        }
-        static public void StoreRaw(string fullpath, string raw)
-        {
-            using (FileStream fs = new FileStream(fullpath, FileMode.Create, FileAccess.Write))
-            {
-                using (StreamWriter w = new StreamWriter(fs))
-                {
-                    w.Write(raw);
-                }
-            }
-        }
+
         static public void CreateDirectoryOf(string file)
         {
             List<string> path = file.Split('\\').ToList();   //Regex.Split(file, "\\");
@@ -286,7 +258,7 @@ namespace IPL_IDE_Advanced_Editor
             return ide_raw;
         }
 
-        public static List<string> PatchAllIpl(List<string> ipl, List<string> ipl_raw, BackgroundWorker bgWorker, int total)
+        public static List<string> PatchAllIpl(List<string> ipl, List<string> ipl_raw, BackgroundWorker bgWorker)
         {
             for (int i = 0; i < ipl_raw.Count; i++)
             {
@@ -351,9 +323,11 @@ namespace IPL_IDE_Advanced_Editor
                                     line[j] = String.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}",
                                         id, modelName, interior, posX, posY, posZ, rotX, rotY, rotZ, rotW, lod);
                                 }
-                                int subtotal = (int)(100 * (float)j / (float)line.Length);
-                                bgWorker.ReportProgress(total, String.Format("{0} %\nPatching IPL files ({1}/{2}):\n{3} {4}%",
-                                    total.ToString(), i + 1, ipl.Count, ipl[i].Split('\\').ToList().Last(), subtotal.ToString()));
+                                int total = (int)(100 * (float)j / (float)line.Length);
+                                bgWorker.ReportProgress(Editor.PercentageCompleted,
+                                    String.Format("{0} %\nPatching IPL files ({1}/{2}):\n{3} {4}%",
+                                    Editor.PercentageCompleted.ToString(), i + 1, ipl.Count,
+                                    ipl[i].Split('\\').ToList().Last(), total.ToString()));
                             }
                             break;
                     }
@@ -406,6 +380,107 @@ namespace IPL_IDE_Advanced_Editor
             foreach (string path in inputPaths)
                 outputPaths.Add(path.Replace(inputPathBase, outputPathBase));
             return outputPaths;
+        }
+
+        public static void BatchIdsReConversion(List<string> ide, List<string> ide_raw, List<string> ipl_raw, int startID, BackgroundWorker bgWorker)
+        {
+            for (int i = 0; i < ide_raw.Count; i++)
+            {
+                string[] line = Regex.Split(ide_raw[i], "\r\n");    // ide_raw[i].Split(new [] { '\r', '\n' });
+                int stat = 0;
+                for (int j = 0; j < line.Length; j++)
+                {
+                    switch (stat)
+                    {
+                        case 0:
+                            if (line[j].Equals("objs") || line[j].Equals("tobj")) stat = 1;
+                            break;
+                        case 1:
+                            if (line[j].Equals("end")) stat = 0;
+                            else
+                            {
+                                string oldExpr, newExpr;
+                                string[] dummy = line[j].Split(',');
+                                int Id;
+                                /*if (dummy[0].StartsWith("#"))
+                                    dummy[0] = dummy[0].Substring(dummy[0].IndexOf("#"));*/
+                                try
+                                {
+                                    Id = Int32.Parse(dummy[0]);
+                                }
+                                catch
+                                {
+                                    throw new Exception(
+                                        String.Format("Error: invalid Id value: '{0}' on file '{1}', line {2}",
+                                        dummy[0], ide[i], j + 1));
+                                }
+                                oldExpr = dummy[0] + "," + dummy[1];
+                                line[j] = (Id + Editor.offset - startID).ToString() + line[j].Substring(line[j].IndexOf(','));
+                                dummy = line[j].Split(',');
+                                newExpr = dummy[0] + "," + dummy[1];
+                                for (int i2 = 0; i2 < ipl_raw.Count; i2++)
+                                    ipl_raw[i2] = ipl_raw[i2].Replace(oldExpr, newExpr);
+                                Editor.Progress++;
+                                Editor.UpdateProgress();
+                                bgWorker.ReportProgress(Editor.PercentageCompleted,
+                                    String.Format("{0} %\nProcessing: {1}",
+                                    Editor.PercentageCompleted.ToString(), ide[i].Split('\\').ToList().Last()));
+                            }
+                            break;
+                    }
+                }
+                ide_raw[i] = String.Join("\r\n", line);
+            }
+        }
+
+        public static void FixIplCoordinates(List<string> ipl, List<string> ipl_raw, BackgroundWorker bgWorker)
+        {
+            for (int i = 0; i < ipl_raw.Count; i++)
+            {
+                LogCoord.ReportFile(ipl[i]);
+                string[] line = Regex.Split(ipl_raw[i], "\r\n");
+                int stat = 0;
+                for (int j = 0; j < line.Length; j++)
+                {
+                    switch (stat)
+                    {
+                        case 0:
+                            if (line[j].Equals("inst")) stat = 1;
+                            break;
+                        case 1:
+                            if (line[j].Equals("end")) stat = 2;
+                            else
+                            {
+                                string[] dummy = line[j].Split(',');
+                                LogCoord.InitCoordinates();
+                                LogCoord.LogCoordinates(dummy[3], dummy[4], dummy[5]);
+                                if (dummy.Length > 1)
+                                {
+                                    decimal posx, posy, posz;
+                                    posx = Decimal.Parse(dummy[3], NumberStyles.Any, CultureInfo.InvariantCulture);
+                                    posy = Decimal.Parse(dummy[4], NumberStyles.Any, CultureInfo.InvariantCulture);
+                                    posz = Decimal.Parse(dummy[5], NumberStyles.Any, CultureInfo.InvariantCulture);
+                                    posx += Editor.xOff;
+                                    posy += Editor.yOff;
+                                    posz += Editor.zOff;
+                                    dummy[3] = " " + posx.ToString().Replace(",", ".");
+                                    dummy[4] = " " + posy.ToString().Replace(",", ".");
+                                    dummy[5] = " " + posz.ToString().Replace(",", ".");
+                                    line[j] = String.Join(",", dummy);
+                                }
+                                LogCoord.LogCoordinates(dummy[3], dummy[4], dummy[5]);
+                                LogCoord.WriteCoordErrorLine(dummy[0] + ", " + dummy[1], Editor.xOff, Editor.yOff, Editor.zOff);
+                            }
+                            break;
+                    }
+                }
+                Editor.UpdateProgress();
+                bgWorker.ReportProgress(Editor.PercentageCompleted,
+                    String.Format("{0} %\nEditing coordinates of: {1}",
+                    Editor.PercentageCompleted.ToString(), ipl[i]));
+                ipl_raw[i] = String.Join("\r\n", line);
+            }
+            LogCoord.EndLogging("coordinate_change.log");
         }
     }
 }

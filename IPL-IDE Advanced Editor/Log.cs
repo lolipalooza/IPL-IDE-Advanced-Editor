@@ -9,7 +9,7 @@ namespace IPL_IDE_Advanced_Editor
 {
     class LogCoord
     {
-        private static string Raw;
+        private static string raw;
         private static string File;
         private static List<string> Coord;
         public static void ReportFile(string file)
@@ -60,10 +60,10 @@ namespace IPL_IDE_Advanced_Editor
                 {
                     if (LogCoord.File != String.Empty)
                     {
-                        LogCoord.Raw += String.Format("File: {0}\r\n", LogCoord.File);
+                        LogCoord.raw += String.Format("File: {0}\r\n", LogCoord.File);
                         LogCoord.ClearFile();
                     }
-                    LogCoord.Raw += String.Format(
+                    LogCoord.raw += String.Format(
                         "Warning! Decimal difference found in: \"{0}\", " 
                         + "coord change: x {1} -> {2}, y {3} -> {4}, z {5} -> {6}\r\n",
                         ipl_item, x1, x2, y1, y2, z1, z2);
@@ -72,21 +72,26 @@ namespace IPL_IDE_Advanced_Editor
         }
         public static void EndLogging(string logfile)
         {
-            if (LogCoord.Raw != String.Empty)
-                Editor.StoreRaw("coordinate_change.log", LogCoord.Raw);
+            if (LogCoord.raw != String.Empty)
+                Raw.Store("coordinate_change.log", LogCoord.raw);
         }
     }
 
     class LogIds
     {
-        private static string Raw;
+        private static string raw;
 
         // This is just to Watch ids on breakpoints
         private static List<string> Ids;
 
+        public static void Init()
+        {
+            LogIds.raw = String.Empty;
+        }
+
         public static void Log(string line)
         {
-            LogIds.Raw += String.Format("{0}\r\n", line);
+            LogIds.raw += String.Format("{0}\r\n", line);
         }
 
         public static void Log(Dictionary<string, List<string>> Ids)
@@ -107,15 +112,61 @@ namespace IPL_IDE_Advanced_Editor
             raw_lines_ids.Sort();
             foreach (int id in raw_lines_ids)
             {
-                LogIds.Raw += raw_lines[id];
+                LogIds.raw += raw_lines[id];
                 LogIds.Ids.Add(raw_lines[id]);
             }
         }
 
         public static void EndLogging(string logfile)
         {
-            if (LogIds.Raw != String.Empty)
-                Editor.StoreRaw(logfile, LogIds.Raw);
+            if (LogIds.raw != String.Empty)
+                Raw.Store(logfile, LogIds.raw);
+        }
+
+        public static void LogWithMissingIds(Dictionary<string, List<string>> dictionary)
+        {
+            LogIds.Ids = new List<string>();
+            List<int> raw_lines_ids = new List<int>();
+            Dictionary<int, string> raw_lines = new Dictionary<int, string>();
+            List<string> missing = new List<string>();
+            foreach (KeyValuePair<string, List<string>> item in dictionary)
+            {
+                if (item.Value.Count > 0)
+                {
+                    raw_lines_ids.Add(Int32.Parse(item.Value.First()));
+                    raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]]
+                        = String.Format("File {0} - first Id: {1}, last id: {2}\r\n",
+                        item.Key, item.Value.First(), item.Value.Last());
+
+                    int estimated = Convert.ToInt32(item.Value.First());
+                    foreach (string id in item.Value)
+                    {
+                        if (estimated != Convert.ToInt32(id))
+                        {
+                            for (int i = estimated; i < Convert.ToInt32(id); i++, estimated++)
+                            {
+                                missing.Add(i.ToString());
+                            }
+                        }
+                        estimated++;
+                    }
+
+                    if (missing.Count > 0)
+                    {
+                        raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]] += String.Format("Missing ids: {0}", String.Join(", ", missing));
+                        raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]] += "\r\n";
+                    }
+                    raw_lines[raw_lines_ids[raw_lines_ids.Count - 1]] += "\r\n";
+
+                    missing = new List<string>();
+                }
+            }
+            raw_lines_ids.Sort();
+            foreach (int id in raw_lines_ids)
+            {
+                LogIds.raw += raw_lines[id];
+                LogIds.Ids.Add(raw_lines[id]);
+            }
         }
     }
 }

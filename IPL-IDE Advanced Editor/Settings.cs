@@ -59,7 +59,7 @@ namespace IPL_IDE_Advanced_Editor
         {
             Settings.Data = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
-            string raw = Editor.GetRaw(Settings.ini);
+            string raw = Raw.Get(Settings.ini);
             string[] lines = Regex.Split(raw, "\r\n");
             string section = "", key = "", value = "";
             foreach (string line in lines)
@@ -85,7 +85,7 @@ namespace IPL_IDE_Advanced_Editor
         public static void Save()
         {
             List<string> save = new List<string>();
-            string raw = Editor.GetRaw(Settings.ini);
+            string raw = Raw.Get(Settings.ini);
             string[] lines = Regex.Split(raw, "\r\n");
             string section = "", key = "";
             foreach (string line in lines)
@@ -109,7 +109,7 @@ namespace IPL_IDE_Advanced_Editor
                 else
                     save.Add(line);
             }
-            Editor.StoreRaw(Settings.ini, String.Join("\r\n", save));
+            Raw.Store(Settings.ini, String.Join("\r\n", save));
         }
 
         public static int GetSelected()
